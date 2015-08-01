@@ -174,7 +174,7 @@ void write_file_histogram(char filename_out2[], FILE *fp_out2, int hist[], float
 }
 
 
-void image_shift(unsigned char **image_in, unsigned char **image_out, int n)
+void image_shift(unsigned char ***image_in, unsigned char ***image_out, int n)
 {
 	int i = 0;
 	int j = 0;
@@ -184,8 +184,8 @@ void image_shift(unsigned char **image_in, unsigned char **image_out, int n)
 	{
 		for (j = 0; j < columns; j++)
 		{
-			x = image_in[i][j] / pow(2, (8 - n)); //<< n // Left shift depending on how many bits we gave
-			image_out[i][j] = (unsigned char)x;
+			x = (*image_in)[i][j] / pow(2, (8 - n)); //<< n // Left shift depending on how many bits we gave
+			(*image_out)[i][j] = (unsigned char)x;
 			/*if(image_out[i][j]>100)
 			{
 			image_out[i][j]=255;
@@ -199,7 +199,7 @@ void image_shift(unsigned char **image_in, unsigned char **image_out, int n)
 }
 
 
-void image_threshold(unsigned char **image_in, unsigned char **image_out, int threshold)
+void image_threshold(unsigned char ***image_in, unsigned char ***image_out, int threshold)
 {
 	int i = 0;
 	int j = 0;
@@ -208,20 +208,20 @@ void image_threshold(unsigned char **image_in, unsigned char **image_out, int th
 	{
 		for (j = 0; j < columns; j++)
 		{
-			if (image_in[i][j] > threshold) // Check if image input (specific pixel) is higher or lower than the threshold we gave
+			if ((*image_in)[i][j] > threshold) // Check if image input (specific pixel) is higher or lower than the threshold we gave
 			{
-				image_out[i][j] = 255;
+				(*image_out)[i][j] = 255;
 			}
 			else
 			{
-				image_out[i][j] = 0;
+				(*image_out)[i][j] = 0;
 			}
 		}
 	}
 }
 
 
-void image_negative(unsigned char **image_in, unsigned char **image_out)
+void image_negative(unsigned char ***image_in, unsigned char ***image_out)
 {
 	int i = 0;
 	int j = 0;
@@ -230,13 +230,13 @@ void image_negative(unsigned char **image_in, unsigned char **image_out)
 	{
 		for (j = 0; j < columns; j++)
 		{
-			image_out[i][j] = 255 - image_in[i][j]; // Creating a negative image
+			(*image_out)[i][j] = 255 - (*image_in)[i][j]; // Creating a negative image
 		}
 	}
 }
 
 
-void image_sqrt(unsigned char **image_in, unsigned char **image_out)
+void image_sqrt(unsigned char ***image_in, unsigned char ***image_out)
 {
 	int i = 0;
 	int j = 0;
@@ -245,38 +245,13 @@ void image_sqrt(unsigned char **image_in, unsigned char **image_out)
 	{
 		for (j = 0; j < columns; j++)
 		{
-			image_out[i][j] = (unsigned char)sqrt(image_in[i][j] * 255); // Square root calculation
+			(*image_out)[i][j] = (unsigned char)sqrt((*image_in)[i][j] * 255); // Square root calculation
 		}
 	}
 }
 
 
-void image_contrast_enhancement(unsigned char **image_in, unsigned char **image_out, float a, float b)
-{
-	int i = 0;
-	int j = 0;
-	float x = 0.0;
-
-	for (i = 0; i < lines; i++)
-	{
-		for (j = 0; j < columns; j++)
-		{
-			x = (image_in[i][j] + a)*b; // Contrast Enhancement
-			if (x > 255)
-			{
-				x = 255;
-			}
-			else if (x < 0)
-			{
-				x = 0;
-			}
-			image_out[i][j] = (unsigned char)x;
-		}
-	}
-}
-
-
-void image_brightness(unsigned char **image_in, unsigned char **image_out, float a)
+void image_contrast_enhancement(unsigned char ***image_in, unsigned char ***image_out, float a, float b)
 {
 	int i = 0;
 	int j = 0;
@@ -286,7 +261,7 @@ void image_brightness(unsigned char **image_in, unsigned char **image_out, float
 	{
 		for (j = 0; j < columns; j++)
 		{
-			x = image_in[i][j] + a; // Brightness
+			x = ((*image_in)[i][j] + a)*b; // Contrast Enhancement
 			if (x > 255)
 			{
 				x = 255;
@@ -295,13 +270,13 @@ void image_brightness(unsigned char **image_in, unsigned char **image_out, float
 			{
 				x = 0;
 			}
-			image_out[i][j] = (unsigned char)x;
+			(*image_out)[i][j] = (unsigned char)x;
 		}
 	}
 }
 
 
-void image_contrast(unsigned char **image_in, unsigned char **image_out, float b)
+void image_brightness(unsigned char ***image_in, unsigned char ***image_out, float a)
 {
 	int i = 0;
 	int j = 0;
@@ -311,7 +286,7 @@ void image_contrast(unsigned char **image_in, unsigned char **image_out, float b
 	{
 		for (j = 0; j < columns; j++)
 		{
-			x = image_in[i][j] * b; // Contrast
+			x = (*image_in)[i][j] + a; // Brightness
 			if (x > 255)
 			{
 				x = 255;
@@ -320,13 +295,38 @@ void image_contrast(unsigned char **image_in, unsigned char **image_out, float b
 			{
 				x = 0;
 			}
-			image_out[i][j] = (unsigned char)x;
+			(*image_out)[i][j] = (unsigned char)x;
 		}
 	}
 }
 
 
-void histogram(unsigned char **image_in, int hist[])
+void image_contrast(unsigned char ***image_in, unsigned char ***image_out, float b)
+{
+	int i = 0;
+	int j = 0;
+	float x = 0.0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			x = (*image_in)[i][j] * b; // Contrast
+			if (x > 255)
+			{
+				x = 255;
+			}
+			else if (x < 0)
+			{
+				x = 0;
+			}
+			(*image_out)[i][j] = (unsigned char)x;
+		}
+	}
+}
+
+
+void histogram(unsigned char ***image_in, int hist[])
 {
 	int i = 0;
 	int j = 0;
@@ -341,7 +341,7 @@ void histogram(unsigned char **image_in, int hist[])
 	{
 		for (j = 0; j < columns; j++)
 		{
-			l = image_in[i][j];
+			l = (*image_in)[i][j];
 			hist[l]++; // Printing histogram
 		}
 	}
@@ -436,7 +436,7 @@ void histogram_possibility(int hist[], float possibility[])
 }
 
 
-void histogram_equalization_rgb(unsigned char **image_in, unsigned char **image_out, float possibility[])
+void histogram_equalization_rgb(unsigned char ***image_in, unsigned char ***image_out, float possibility[])
 {
 	int i = 0;
 	int j = 0;
@@ -453,8 +453,8 @@ void histogram_equalization_rgb(unsigned char **image_in, unsigned char **image_
 	{
 		for (j = 0; j < columns; j++)
 		{
-			k = image_in[i][j];
-			image_out[i][j] = (unsigned char)round(hist_eq[k] * 255.0); // Histogram equalization
+			k = (*image_in)[i][j];
+			(*image_out)[i][j] = (unsigned char)round(hist_eq[k] * 255.0); // Histogram equalization
 		}
 	}
 }
@@ -495,7 +495,7 @@ float histogram_variance(int hist[], float mean)
 }
 
 
-void image_sum(unsigned char **image_in1, unsigned char **image_in2, unsigned char **image_out)
+void image_sum(unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out)
 {
 	int i = 0;
 	int j = 0;
@@ -505,18 +505,18 @@ void image_sum(unsigned char **image_in1, unsigned char **image_in2, unsigned ch
 	{
 		for (j = 0; j < columns; j++)
 		{
-			a = image_in1[i][j] + image_in2[i][j]; // Image summarization
+			a = (*image_in1)[i][j] + (*image_in2)[i][j]; // Image summarization
 			if (a > 255)
 			{
 				a = 255;
 			}
-			image_out[i][j] = (unsigned char)a;
+			(*image_out)[i][j] = (unsigned char)a;
 		}
 	}
 }
 
 
-void image_sub(unsigned char **image_in1, unsigned char **image_in2, unsigned char **image_out)
+void image_sub(unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out)
 {
 	int i = 0;
 	int j = 0;
@@ -525,13 +525,13 @@ void image_sub(unsigned char **image_in1, unsigned char **image_in2, unsigned ch
 	{
 		for (j = 0; j < columns; j++)
 		{
-			image_out[i][j] = image_in1[i][j] - image_in2[i][j]; // Image subtraction
+			(*image_out)[i][j] = (*image_in1)[i][j] - (*image_in2)[i][j]; // Image subtraction
 		}
 	}
 }
 
 
-void image_convolution(unsigned char **image_in, unsigned char **image_out, float **w, int size)
+void image_convolution(unsigned char ***image_in, unsigned char ***image_out, float **w, int size)
 {
 	int i = 0;
 	int j = 0;
@@ -543,7 +543,7 @@ void image_convolution(unsigned char **image_in, unsigned char **image_out, floa
 	{
 		for (j = 0; j < columns; j++)
 		{
-			image_out[i][j] = 0;
+			(*image_out)[i][j] = 0;
 		}
 	}
 
@@ -556,7 +556,7 @@ void image_convolution(unsigned char **image_in, unsigned char **image_out, floa
 			{
 				for (l = 0; l < size; l++)
 				{
-					t = t + image_in[i + k - 1][j + l - 1] * w[k][l]; // Image Convolution with one mask
+					t = t + (*image_in)[i + k - 1][j + l - 1] * w[k][l]; // Image Convolution with one mask
 				}
 			}
 
@@ -568,13 +568,13 @@ void image_convolution(unsigned char **image_in, unsigned char **image_out, floa
 			{
 				t = 0.0;
 			}
-			image_out[i][j] = (unsigned char)t;
+			(*image_out)[i][j] = (unsigned char)t;
 		}
 	}
 }
 
 
-void image_convolution_2d(unsigned char **image_in, unsigned char **image_out, float **wx, float **wy, int size)
+void image_convolution_2d(unsigned char ***image_in, unsigned char ***image_out, float **wx, float **wy, int size)
 {
 	int i = 0;
 	int j = 0;
@@ -588,7 +588,7 @@ void image_convolution_2d(unsigned char **image_in, unsigned char **image_out, f
 	{
 		for (j = 0; j < columns; j++)
 		{
-			image_out[i][j] = 0;
+			(*image_out)[i][j] = 0;
 		}
 	}
 
@@ -601,7 +601,7 @@ void image_convolution_2d(unsigned char **image_in, unsigned char **image_out, f
 			{
 				for (l = 0; l < size; l++)
 				{
-					tx = tx + image_in[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
+					tx = tx + (*image_in)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
 				}
 			}
 
@@ -610,7 +610,7 @@ void image_convolution_2d(unsigned char **image_in, unsigned char **image_out, f
 			{
 				for (l = 0; l < size; l++)
 				{
-					ty = ty + image_in[i + k - 1][j + l - 1] * wy[k][l]; // Image Convolution with one mask at Y-Axis
+					ty = ty + (*image_in)[i + k - 1][j + l - 1] * wy[k][l]; // Image Convolution with one mask at Y-Axis
 				}
 			}
 
@@ -625,7 +625,7 @@ void image_convolution_2d(unsigned char **image_in, unsigned char **image_out, f
 				t = 0.0;
 			}
 
-			image_out[i][j] = (unsigned char)t;
+			(*image_out)[i][j] = (unsigned char)t;
 		}
 	}
 }

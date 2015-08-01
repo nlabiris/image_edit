@@ -258,8 +258,8 @@ hist[255] = 0
 
 ----
 
-min position	= 4846752	|	hue population at min = 4846776
-max position	= 4846740	|	hue population at max = 4846764
+min position	= 1504424	|	hue population at min = 1504448
+max position	= 1504412	|	hue population at max = 1504436
 mean value	= 125.164856
 variance	= 45.054283
 

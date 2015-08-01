@@ -9,12 +9,12 @@ int main()
 	FILE *fp_in = NULL;					// File Pointer for image_in
 	FILE *fp_out = NULL;				// File Pointer for image_out
 	FILE *fp_out2 = NULL;				// File Pointer for histogram
-	unsigned char **image_in = NULL;			// Image input array
-	unsigned char **image_in1 = NULL;			// Image input 1 for summarize - subtract
-	unsigned char **image_in2 = NULL;			// Image input 2 for summarize - subtract
-	unsigned char **image_out = NULL;			// Image output array
-	char release_mem = 0;
-	char release_mem_sum_sub = 0;
+	unsigned char **image_in = NULL;	// Image input array
+	unsigned char **image_in1 = NULL;	// Image input 1 for summarize - subtract
+	unsigned char **image_in2 = NULL;	// Image input 2 for summarize - subtract
+	unsigned char **image_out = NULL;	// Image output array
+	char release_mem = 0;				// Check if entered choice 1
+	char release_mem_sum_sub = 0;		// Check if entered choice 13, 14
 	char filename_in[20];				// Filename for input image
 	char filename_out[20];				// Filename for output image
 	char filename_out2[20];				// Filename for histogram
@@ -23,9 +23,9 @@ int main()
 	float variance = 0.0;				// Variance 
 	float a = 0.0;						// Brightness
 	float b = 0.0;						// Contrast
-	//float **w = NULL;							// Mask array
-	float **wx = NULL;							// Mask array X-Axis
-	float **wy = NULL;							// Mask array Y-Axis
+	//float **w = NULL;					// Mask array
+	float **wx = NULL;					// Mask array X-Axis
+	float **wy = NULL;					// Mask array Y-Axis
 	int hist[256];						// Histogram array
 	int i = 0;							// Line counter
 	int j = 0;							// Column counter
@@ -58,7 +58,7 @@ int main()
 		printf("13. Image subtraction\n");
 		printf("14. Image convolution with 2 masks\n\n\n");
 
-		printf("Enter a number (0-13): ");
+		printf("Enter a number (0-14): ");
 		scanf("%d", &choice);
 
 		switch (choice)
@@ -96,7 +96,7 @@ int main()
 			scanf("%d", &n);
 
 			printf("\n\nImage editing...\n");
-			image_shift(image_in, image_out, n);
+			image_shift(&image_in, &image_out, n);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -109,7 +109,7 @@ int main()
 			scanf("%d", &threshold);
 
 			printf("\n\nImage editing...\n");
-			image_threshold(image_in, image_out, threshold);
+			image_threshold(&image_in, &image_out, threshold);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -119,7 +119,7 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			image_negative(image_in, image_out);
+			image_negative(&image_in, &image_out);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -129,7 +129,7 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			image_sqrt(image_in, image_out);
+			image_sqrt(&image_in, &image_out);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -145,7 +145,7 @@ int main()
 			scanf("%f", &b);
 
 			printf("\n\nImage editing...\n");
-			image_contrast_enhancement(image_in, image_out, a, b);
+			image_contrast_enhancement(&image_in, &image_out, a, b);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -158,7 +158,7 @@ int main()
 			scanf("%f", &a);
 
 			printf("\n\nImage editing...\n");
-			image_brightness(image_in, image_out, a);
+			image_brightness(&image_in, &image_out, a);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -171,7 +171,7 @@ int main()
 			scanf("%f", &b);
 
 			printf("\n\nImage editing...\n");
-			image_contrast(image_in, image_out, b);
+			image_contrast(&image_in, &image_out, b);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -181,7 +181,7 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			histogram(image_in, hist);
+			histogram(&image_in, hist);
 			histogram_min(hist, &min, &min_pos);
 			histogram_max(hist, &max, &max_pos);
 			histogram_possibility(hist, possibility);
@@ -198,9 +198,9 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			histogram(image_in, hist);
+			histogram(&image_in, hist);
 			histogram_possibility(hist, possibility);
-			histogram_equalization_rgb(image_in, image_out, possibility);
+			histogram_equalization_rgb(&image_in, &image_out, possibility);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -212,7 +212,7 @@ int main()
 			read_file_sum_sub(&image_in1, &image_in2, filename_in, fp_in);
 
 			printf("\n\nImage editing...\n");
-			image_sum(image_in1, image_in2, image_out);
+			image_sum(&image_in1, &image_in2, &image_out);
 			printf("\nEditing complete.\n\n");
 
 			release_mem_sum_sub = 1;
@@ -224,7 +224,7 @@ int main()
 			read_file_sum_sub(&image_in1, &image_in2, filename_in, fp_in);
 
 			printf("\n\nImage editing...\n");
-			image_sub(image_in1, image_in2, image_out);
+			image_sub(&image_in1, &image_in2, &image_out);
 			printf("\nEditing complete.\n\n");
 
 			release_mem_sum_sub = 1;
@@ -272,7 +272,7 @@ int main()
 				printf("\n");
 			}
 
-			image_convolution_2d(image_in, image_out, wx, wy, size);
+			image_convolution_2d(&image_in, &image_out, wx, wy, size);
 			printf("\nEditing complete.\n\n");
 
 			for (i = 0; i < size; i++)
