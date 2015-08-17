@@ -1,9 +1,9 @@
 # Basic image processing program
 
-A simple image processing program made with *C#* and *WPF* containg a large amount of algorithms to test.
+A simple image processing program made with *C* containg a large amount of algorithms to test.
 Currently supports the following file formats:
 
-- RAW
+- RAW (Planar only)
 
 
 ### Algorithms
