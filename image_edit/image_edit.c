@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+#define _CRT_SECURE_NO_WARNINGS	// Disabled deprication warnings for scanf, fopen
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,7 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "image_edit.h"
 
 
-void release_memory(unsigned char ***image_in, unsigned char ***image_out)
+
+
+/****************************** BW ******************************/
+
+void release_memory_bw(unsigned char ***image_in, unsigned char ***image_out)
 {
 	int i = 0;
 
@@ -43,8 +48,7 @@ void release_memory(unsigned char ***image_in, unsigned char ***image_out)
 	*image_out = NULL;
 }
 
-
-void release_memory_sum_sub(unsigned char ***image_in, unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out)
+void release_memory_sum_sub_bw(unsigned char ***image_in, unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out)
 {
 	int i = 0;
 
@@ -81,8 +85,7 @@ void release_memory_sum_sub(unsigned char ***image_in, unsigned char ***image_in
 	}
 }
 
-
-void read_file(unsigned char ***image_in, unsigned char ***image_out, char filename_in[], FILE *fp_in)
+void read_file_bw(unsigned char ***image_in, unsigned char ***image_out, char filename_in[], FILE *fp_in)
 {
 	int i = 0;
 
@@ -117,8 +120,7 @@ void read_file(unsigned char ***image_in, unsigned char ***image_out, char filen
 	fclose(fp_in);
 }
 
-
-void read_file_sum_sub(unsigned char ***image_in1, unsigned char ***image_in2, char filename_in[], FILE *fp_in)
+void read_file_sum_sub_bw(unsigned char ***image_in1, unsigned char ***image_in2, char filename_in[], FILE *fp_in)
 {
 	int i = 0;
 
@@ -151,8 +153,7 @@ void read_file_sum_sub(unsigned char ***image_in1, unsigned char ***image_in2, c
 	fclose(fp_in);
 }
 
-
-void write_file(unsigned char ***image_in, unsigned char ***image_out, char filename_out[], FILE *fp_out)
+void write_file_bw(unsigned char ***image_out, char filename_out[], FILE *fp_out)
 {
 	int i = 0;
 
@@ -168,8 +169,7 @@ void write_file(unsigned char ***image_in, unsigned char ***image_out, char file
 	fclose(fp_out);
 }
 
-
-void write_file_histogram(char filename_out2[], FILE *fp_out2, int hist[], float possibility[], float mean, float variance, int *min, int *max, int *min_pos, int *max_pos)
+void write_file_histogram_bw(char filename_out2[], FILE *fp_out2, int hist[], float possibility[], float mean, float variance, int *min, int *max, int *min_pos, int *max_pos)
 {
 	int i = 0;
 
@@ -195,8 +195,7 @@ void write_file_histogram(char filename_out2[], FILE *fp_out2, int hist[], float
 	fclose(fp_out2);
 }
 
-
-void image_shift(unsigned char ***image_in, unsigned char ***image_out, int n)
+void image_shift_bw(unsigned char ***image_in, unsigned char ***image_out, int n)
 {
 	int i = 0;
 	int j = 0;
@@ -220,8 +219,7 @@ void image_shift(unsigned char ***image_in, unsigned char ***image_out, int n)
 	}
 }
 
-
-void image_threshold(unsigned char ***image_in, unsigned char ***image_out, int threshold)
+void image_threshold_bw(unsigned char ***image_in, unsigned char ***image_out, int threshold)
 {
 	int i = 0;
 	int j = 0;
@@ -242,8 +240,7 @@ void image_threshold(unsigned char ***image_in, unsigned char ***image_out, int 
 	}
 }
 
-
-void image_negative(unsigned char ***image_in, unsigned char ***image_out)
+void image_negative_bw(unsigned char ***image_in, unsigned char ***image_out)
 {
 	int i = 0;
 	int j = 0;
@@ -257,8 +254,7 @@ void image_negative(unsigned char ***image_in, unsigned char ***image_out)
 	}
 }
 
-
-void image_sqrt(unsigned char ***image_in, unsigned char ***image_out)
+void image_sqrt_bw(unsigned char ***image_in, unsigned char ***image_out)
 {
 	int i = 0;
 	int j = 0;
@@ -272,8 +268,7 @@ void image_sqrt(unsigned char ***image_in, unsigned char ***image_out)
 	}
 }
 
-
-void image_contrast_enhancement(unsigned char ***image_in, unsigned char ***image_out, float a, float b)
+void image_contrast_enhancement_bw(unsigned char ***image_in, unsigned char ***image_out, float a, float b)
 {
 	int i = 0;
 	int j = 0;
@@ -297,8 +292,7 @@ void image_contrast_enhancement(unsigned char ***image_in, unsigned char ***imag
 	}
 }
 
-
-void image_brightness(unsigned char ***image_in, unsigned char ***image_out, float a)
+void image_brightness_bw(unsigned char ***image_in, unsigned char ***image_out, float a)
 {
 	int i = 0;
 	int j = 0;
@@ -322,8 +316,7 @@ void image_brightness(unsigned char ***image_in, unsigned char ***image_out, flo
 	}
 }
 
-
-void image_contrast(unsigned char ***image_in, unsigned char ***image_out, float b)
+void image_contrast_bw(unsigned char ***image_in, unsigned char ***image_out, float b)
 {
 	int i = 0;
 	int j = 0;
@@ -347,8 +340,7 @@ void image_contrast(unsigned char ***image_in, unsigned char ***image_out, float
 	}
 }
 
-
-void histogram(unsigned char ***image_in, int hist[])
+void histogram_bw(unsigned char ***image_in, int hist[])
 {
 	int i = 0;
 	int j = 0;
@@ -369,8 +361,7 @@ void histogram(unsigned char ***image_in, int hist[])
 	}
 }
 
-
-void histogram_min(int hist[], int *min, int *min_pos)
+void histogram_min_bw(int hist[], int *min, int *min_pos)
 {
 	int i = 0;
 	*min = 0;
@@ -386,8 +377,7 @@ void histogram_min(int hist[], int *min, int *min_pos)
 	}
 }
 
-
-void histogram_max(int hist[], int *max, int *max_pos)
+void histogram_max_bw(int hist[], int *max, int *max_pos)
 {
 	int i = 0;
 	*max = 0; // allios max=hist[0]; an den kseroume ti domi tou pinaka
@@ -402,7 +392,6 @@ void histogram_max(int hist[], int *max, int *max_pos)
 		}
 	}
 }
-
 
 /*********** B way for min-max ***********/
 
@@ -446,8 +435,40 @@ int histogram_max(unsigned char **image_in)
 
 */
 
+float histogram_mean_bw(int hist[])
+{
+	int i = 0;
+	float mean = 0.0;
+	float hist_sum = 0.0;
 
-void histogram_possibility(int hist[], float possibility[])
+	for (i = 0; i < 256; i++)
+	{
+		// hist[i] : number of pixel that has a specific hue
+		// i : hue
+		hist_sum = hist_sum + (i*hist[i]);
+	}
+	mean = hist_sum / (float)(lines*columns); // Mean value
+	return mean;
+}
+
+float histogram_variance_bw(int hist[], float mean)
+{
+	int i = 0;
+	float variance = 0.0;
+	float var_sum = 0.0;
+
+	for (i = 0; i < 256; i++)
+	{
+		// hist[i] : number of pixel that has a specific hue
+		// i : hue
+		var_sum = (var_sum + ((i - mean)*(i - mean)*hist[i])) / (float)(lines*columns);
+	}
+	variance = (float)sqrt(var_sum);
+	//variance=var_sum/((float)lines*columns); // Variance
+	return variance;
+}
+
+void histogram_possibility_bw(int hist[], float possibility[])
 {
 	int i = 0;
 
@@ -457,8 +478,7 @@ void histogram_possibility(int hist[], float possibility[])
 	}
 }
 
-
-void histogram_equalization_rgb(unsigned char ***image_in, unsigned char ***image_out, float possibility[])
+void histogram_equalization_bw(unsigned char ***image_in, unsigned char ***image_out, float possibility[])
 {
 	int i = 0;
 	int j = 0;
@@ -481,43 +501,7 @@ void histogram_equalization_rgb(unsigned char ***image_in, unsigned char ***imag
 	}
 }
 
-
-float histogram_mean(int hist[])
-{
-	int i = 0;
-	float mean = 0;
-	float hist_sum = 0;
-
-	for (i = 0; i < 256; i++)
-	{
-		// hist[i] : number of pixel that has a specific hue
-		// i : hue
-		hist_sum = hist_sum + (i*hist[i]);
-	}
-	mean = hist_sum / ((float)lines*columns); // Mean value
-	return mean;
-}
-
-
-float histogram_variance(int hist[], float mean)
-{
-	int i = 0;
-	float variance = 0.0;
-	float var_sum = 0.0;
-
-	for (i = 0; i < 256; i++)
-	{
-		// hist[i] : number of pixel that has a specific hue
-		// i : hue
-		var_sum = var_sum + ((i - mean)*(i - mean)*hist[i] / ((float)lines*columns));
-	}
-	variance = (float)sqrt(var_sum);
-	//variance=var_sum/((float)lines*columns); // Variance
-	return variance;
-}
-
-
-void image_sum(unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out)
+void image_sum_bw(unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out)
 {
 	int i = 0;
 	int j = 0;
@@ -537,8 +521,7 @@ void image_sum(unsigned char ***image_in1, unsigned char ***image_in2, unsigned 
 	}
 }
 
-
-void image_sub(unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out)
+void image_sub_bw(unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out)
 {
 	int i = 0;
 	int j = 0;
@@ -552,8 +535,7 @@ void image_sub(unsigned char ***image_in1, unsigned char ***image_in2, unsigned 
 	}
 }
 
-
-void image_convolution(unsigned char ***image_in, unsigned char ***image_out, float **w, int size)
+void image_convolution_bw(unsigned char ***image_in, unsigned char ***image_out, float **w, int size)
 {
 	int i = 0;
 	int j = 0;
@@ -595,8 +577,7 @@ void image_convolution(unsigned char ***image_in, unsigned char ***image_out, fl
 	}
 }
 
-
-void image_convolution_2d(unsigned char ***image_in, unsigned char ***image_out, float **wx, float **wy, int size)
+void image_convolution_2d_bw(unsigned char ***image_in, unsigned char ***image_out, float **wx, float **wy, int size)
 {
 	int i = 0;
 	int j = 0;
@@ -650,4 +631,837 @@ void image_convolution_2d(unsigned char ***image_in, unsigned char ***image_out,
 			(*image_out)[i][j] = (unsigned char)t;
 		}
 	}
+}
+
+
+
+
+/****************************** COLOR ******************************/
+
+void release_memory_color	// Release memory (choice 1)
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+)
+{
+	int i = 0;
+
+	for (i = 0; i < lines; i++)
+	{
+		free((*image_in_r)[i]);
+		free((*image_in_g)[i]);
+		free((*image_in_b)[i]);
+		free((*image_out_r)[i]);
+		free((*image_out_g)[i]);
+		free((*image_out_b)[i]);
+		(*image_in_r)[i] = NULL;
+		(*image_in_g)[i] = NULL;
+		(*image_in_b)[i] = NULL;
+		(*image_out_r)[i] = NULL;
+		(*image_out_g)[i] = NULL;
+		(*image_out_b)[i] = NULL;
+	}
+	free(*image_in_r);
+	free(*image_in_g);
+	free(*image_in_b);
+	free(*image_out_r);
+	free(*image_out_g);
+	free(*image_out_b);
+	*image_in_r = NULL;
+	*image_in_g = NULL;
+	*image_in_b = NULL;
+	*image_out_r = NULL;
+	*image_out_g = NULL;
+	*image_out_b = NULL;
+}
+
+void release_memory_sum_sub_color	// Release memory (choices 12, 13)
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
+unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b
+)
+{
+	int i = 0;
+
+	if (*image_in_r == NULL || *image_in_g == NULL || *image_in_b == NULL || *image_out_r == NULL || *image_out_g == NULL || *image_out_b == NULL)
+	{
+		printf("Memory already released! (image_in, image_out)");
+		for (i = 0; i < lines; i++)
+		{
+			free((*image_in1_r)[i]);
+			free((*image_in1_g)[i]);
+			free((*image_in1_b)[i]);
+			free((*image_in2_r)[i]);
+			free((*image_in2_g)[i]);
+			free((*image_in2_b)[i]);
+		}
+		free(*image_in1_r);
+		free(*image_in1_g);
+		free(*image_in1_b);
+		free(*image_in2_r);
+		free(*image_in2_g);
+		free(*image_in2_b);
+		*image_in_r = NULL;
+		*image_in1_g = NULL;
+		*image_in1_b = NULL;
+		*image_in2_r = NULL;
+		*image_in2_g = NULL;
+		*image_in2_b = NULL;
+	}
+	else
+	{
+		for (i = 0; i < lines; i++)
+		{
+			free((*image_in_r)[i]);
+			free((*image_in_g)[i]);
+			free((*image_in_b)[i]);
+			free((*image_in1_r)[i]);
+			free((*image_in1_g)[i]);
+			free((*image_in1_b)[i]);
+			free((*image_in2_r)[i]);
+			free((*image_in2_g)[i]);
+			free((*image_in2_b)[i]);
+			free((*image_out_r)[i]);
+			free((*image_out_g)[i]);
+			free((*image_out_b)[i]);
+		}
+		free(*image_in_r);
+		free(*image_in_g);
+		free(*image_in_b);
+		free(*image_in1_r);
+		free(*image_in1_g);
+		free(*image_in1_b);
+		free(*image_in2_r);
+		free(*image_in2_g);
+		free(*image_in2_b);
+		free(*image_out_r);
+		free(*image_out_g);
+		free(*image_out_b);
+		*image_in_r = NULL;
+		*image_in_g = NULL;
+		*image_in_b = NULL;
+		*image_in1_r = NULL;
+		*image_in1_g = NULL;
+		*image_in1_b = NULL;
+		*image_in2_r = NULL;
+		*image_in2_g = NULL;
+		*image_in2_b = NULL;
+		*image_out_r = NULL;
+		*image_out_g = NULL;
+		*image_out_b = NULL;
+	}
+}
+
+void read_file_color	// Open file for reading
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+char filename_in[], FILE *fp_in
+)
+{
+	int i = 0;
+
+	printf("Enter filename to read: ");
+	scanf("%s", filename_in);
+
+	printf("Number of lines: ");
+	scanf("%d", &lines);
+
+	printf("Number of columns: ");
+	scanf("%d", &columns);
+
+	printf("\n\nMemory allocation...\n");
+	*image_in_r = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_in_r)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}	
+	*image_in_g = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_in_g)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}		
+	*image_in_b = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_in_b)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}
+
+	*image_out_r = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_out_r)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}
+	*image_out_g = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_out_g)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}
+	*image_out_b = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_out_b)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}
+
+	printf("Reading file...\n");
+	if (((fp_in = fopen(filename_in, "rb")) == NULL))
+	{
+		printf("Not a valid input file\n");
+	}
+	else
+	{
+		for (i = 0; i < lines; i++)
+		{
+			fread((*image_in_r)[i], sizeof(unsigned char), columns, fp_in);
+		}
+		for (i = 0; i < lines; i++)
+		{
+			fread((*image_in_g)[i], sizeof(unsigned char), columns, fp_in);
+		}
+		for (i = 0; i < lines; i++)
+		{
+			fread((*image_in_b)[i], sizeof(unsigned char), columns, fp_in);
+		}
+
+		fclose(fp_in);
+	}
+}
+
+void read_file_sum_sub_color	// Open file for reading (Image summarization & Image subtraction)
+(
+unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
+unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b,
+char filename_in[], FILE *fp_in
+)
+{
+	int i = 0;
+
+	printf("\n\nMemory allocation...\n");
+	*image_in1_r = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_in1_r)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}
+	*image_in1_g = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_in1_g)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}
+	*image_in1_b = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_in1_b)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}
+
+	*image_in2_r = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_in2_r)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}
+	*image_in2_g = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_in2_g)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}
+	*image_in2_b = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
+	for (i = 0; i < lines; i++)
+	{
+		(*image_in2_b)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
+	}
+
+	printf("Reading file...\n");
+	if (((fp_in = fopen(filename_in, "rb")) == NULL))
+	{
+		printf("Not a valid input file\n");
+	}
+	else
+	{
+		for (i = 0; i < lines; i++)
+		{
+			fread((*image_in1_r)[i], sizeof(unsigned char), columns, fp_in);
+		}
+		for (i = 0; i < lines; i++)
+		{
+			fread((*image_in1_g)[i], sizeof(unsigned char), columns, fp_in);
+		}
+		for (i = 0; i < lines; i++)
+		{
+			fread((*image_in1_b)[i], sizeof(unsigned char), columns, fp_in);
+		}
+
+		fclose(fp_in);
+	}
+
+	if (((fp_in = fopen(filename_in, "rb")) == NULL))
+	{
+		printf("Not a valid input file\n");
+	}
+	else
+	{
+		for (i = 0; i < lines; i++)
+		{
+			fread((*image_in2_r)[i], sizeof(unsigned char), columns, fp_in);
+		}
+		for (i = 0; i < lines; i++)
+		{
+			fread((*image_in2_g)[i], sizeof(unsigned char), columns, fp_in);
+		}
+		for (i = 0; i < lines; i++)
+		{
+			fread((*image_in2_b)[i], sizeof(unsigned char), columns, fp_in);
+		}
+
+		fclose(fp_in);
+	}
+}
+
+void write_file_color	// Open file for writing
+(
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+char filename_out[], FILE *fp_out
+)
+{
+	int i = 0;
+
+	printf("Enter filename to write: ");
+	scanf("%s", filename_out);
+
+	
+	printf("\n\nWriting file...\n");
+	if (((fp_out = fopen(filename_out, "wb")) == NULL))
+	{
+		printf("Not a valid input file\n");
+	}
+	else
+	{
+		for (i = 0; i < lines; i++)
+		{
+			fwrite((*image_out_r)[i], sizeof(unsigned char), columns, fp_out);
+		}
+		for (i = 0; i < lines; i++)
+		{
+			fwrite((*image_out_g)[i], sizeof(unsigned char), columns, fp_out);
+		}
+		for (i = 0; i < lines; i++)
+		{
+			fwrite((*image_out_b)[i], sizeof(unsigned char), columns, fp_out);
+		}
+
+		fclose(fp_out);
+	}
+}
+
+void image_shift_color	// Shift bit, hue reduction
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+int n
+)
+{
+	int i = 0;
+	int j = 0;
+	double x = 0.0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			x = (*image_in_r)[i][j] / pow(2, (8 - n)); //<< n // Left shift depending on how many bits we gave
+			(*image_out_r)[i][j] = (unsigned char)x;
+
+			x = (*image_in_g)[i][j] / pow(2, (8 - n)); //<< n // Left shift depending on how many bits we gave
+			(*image_out_g)[i][j] = (unsigned char)x;
+
+			x = (*image_in_b)[i][j] / pow(2, (8 - n)); //<< n // Left shift depending on how many bits we gave
+			(*image_out_b)[i][j] = (unsigned char)x;
+		}
+	}
+}
+
+void image_threshold_color	// Image threshold
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+int threshold
+)
+{
+	int i = 0;
+	int j = 0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			if ((*image_in_r)[i][j] > threshold) // Check if image input (specific pixel) is higher or lower than the threshold we gave
+			{
+				(*image_out_r)[i][j] = 255;
+			}
+			else
+			{
+				(*image_out_r)[i][j] = 0;
+			}
+
+			if ((*image_in_g)[i][j] > threshold) // Check if image input (specific pixel) is higher or lower than the threshold we gave
+			{
+				(*image_out_g)[i][j] = 255;
+			}
+			else
+			{
+				(*image_out_g)[i][j] = 0;
+			}
+
+			if ((*image_in_b)[i][j] > threshold) // Check if image input (specific pixel) is higher or lower than the threshold we gave
+			{
+				(*image_out_b)[i][j] = 255;
+			}
+			else
+			{
+				(*image_out_b)[i][j] = 0;
+			}
+		}
+	}
+}
+
+void image_negative_color	// Negative Image creation
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+)
+{
+	int i = 0;
+	int j = 0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			(*image_out_r)[i][j] = 255 - (*image_in_r)[i][j]; // Creating a negative image
+			(*image_out_g)[i][j] = 255 - (*image_in_g)[i][j]; // Creating a negative image
+			(*image_out_b)[i][j] = 255 - (*image_in_b)[i][j]; // Creating a negative image
+		}
+	}
+}
+
+void image_sqrt_color	// Square root calculation
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+)
+{
+	int i = 0;
+	int j = 0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			(*image_out_r)[i][j] = (unsigned char)sqrt((*image_in_r)[i][j] * 255); // Square root calculation
+			(*image_out_g)[i][j] = (unsigned char)sqrt((*image_in_g)[i][j] * 255); // Square root calculation
+			(*image_out_b)[i][j] = (unsigned char)sqrt((*image_in_b)[i][j] * 255); // Square root calculation
+		}
+	}
+}
+
+void image_contrast_enhancement_color	// Contrast enhancement, Brightness and Contrast together
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+float a, float b
+)
+{
+	int i = 0;
+	int j = 0;
+	float x = 0.0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			x = ((*image_in_r)[i][j] + a)*b; // Contrast Enhancement
+			if (x > 255)
+			{
+				x = 255;
+			}
+			else if (x < 0)
+			{
+				x = 0;
+			}
+			(*image_out_r)[i][j] = (unsigned char)x;
+
+			x = ((*image_in_g)[i][j] + a)*b; // Contrast Enhancement
+			if (x > 255)
+			{
+				x = 255;
+			}
+			else if (x < 0)
+			{
+				x = 0;
+			}
+			(*image_out_g)[i][j] = (unsigned char)x;
+
+			x = ((*image_in_b)[i][j] + a)*b; // Contrast Enhancement
+			if (x > 255)
+			{
+				x = 255;
+			}
+			else if (x < 0)
+			{
+				x = 0;
+			}
+			(*image_out_b)[i][j] = (unsigned char)x;
+		}
+	}
+}
+
+void image_brightness_color	// Change Brightness
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+float a
+)
+{
+	int i = 0;
+	int j = 0;
+	float x = 0.0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			x = (*image_in_r)[i][j] + a; // Brightness
+			if (x > 255)
+			{
+				x = 255;
+			}
+			else if (x < 0)
+			{
+				x = 0;
+			}
+			(*image_out_r)[i][j] = (unsigned char)x;
+
+			x = (*image_in_g)[i][j] + a; // Brightness
+			if (x > 255)
+			{
+				x = 255;
+			}
+			else if (x < 0)
+			{
+				x = 0;
+			}
+			(*image_out_g)[i][j] = (unsigned char)x;
+
+			x = (*image_in_b)[i][j] + a; // Brightness
+			if (x > 255)
+			{
+				x = 255;
+			}
+			else if (x < 0)
+			{
+				x = 0;
+			}
+			(*image_out_b)[i][j] = (unsigned char)x;
+		}
+	}
+}
+
+void image_contrast_color	// Change Contrast
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+float b
+)
+{
+	int i = 0;
+	int j = 0;
+	float x = 0.0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			x = (*image_in_r)[i][j] * b; // Contrast
+			if (x > 255)
+			{
+				x = 255;
+			}
+			else if (x < 0)
+			{
+				x = 0;
+			}
+			(*image_out_r)[i][j] = (unsigned char)x;
+
+			x = (*image_in_g)[i][j] * b; // Contrast
+			if (x > 255)
+			{
+				x = 255;
+			}
+			else if (x < 0)
+			{
+				x = 0;
+			}
+			(*image_out_g)[i][j] = (unsigned char)x;
+
+			x = (*image_in_b)[i][j] * b; // Contrast
+			if (x > 255)
+			{
+				x = 255;
+			}
+			else if (x < 0)
+			{
+				x = 0;
+			}
+			(*image_out_b)[i][j] = (unsigned char)x;
+		}
+	}
+}
+
+void histogram_color	// Histogram creation
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+int hist_r[], int hist_g[], int hist_b[]
+)
+{
+	int i = 0;
+	int j = 0;
+	int l = 0;
+
+	for (i = 0; i < 256; i++)
+	{
+		hist_r[i] = 0;
+		hist_g[i] = 0;
+		hist_b[i] = 0;
+	}
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			l = (*image_in_r)[i][j];
+			hist_r[l]++; // Printing histogram
+			l = (*image_in_g)[i][j];
+			hist_g[l]++; // Printing histogram
+			l = (*image_in_b)[i][j];
+			hist_b[l]++; // Printing histogram
+		}
+	}
+}
+
+void histogram_min_color	// Max values histogram
+(
+int hist_r[], int hist_g[], int hist_b[],
+int *min_r, int *min_g, int *min_b,
+int *min_pos_r, int *min_pos_g, int *min_pos_b
+)
+{
+	int i = 0;
+	*min_r = 0;
+	*min_g = 0;
+	*min_b = 0;
+	*min_pos_r = 300;
+	*min_pos_g = 300;
+	*min_pos_b = 300;
+
+	for (i = 0; i < 256; i++)
+	{
+		if ((hist_r[i] != 0) && (i < (*min_pos_r)))
+		{
+			*min_r = hist_r[i];	// MIN hue in the image
+			*min_pos_r = i;		// or min=hist[i];
+		}
+
+		if ((hist_g[i] != 0) && (i < (*min_pos_g)))
+		{
+			*min_g = hist_g[i];	// MIN hue in the image
+			*min_pos_g = i;		// or min=hist[i];
+		}
+
+		if ((hist_b[i] != 0) && (i < (*min_pos_b)))
+		{
+			*min_b = hist_b[i];	// MIN hue in the image
+			*min_pos_b = i;		// or min=hist[i];
+		}
+	}
+}
+
+void histogram_max_color	// Min values histogram
+(
+int hist_r[], int hist_g[], int hist_b[],
+int *max_r, int *max_g, int *max_b,
+int *max_pos_r, int *max_pos_g, int *max_pos_b
+)
+{
+	int i = 0;
+	*max_r = 0; // allios max=hist[0]; an den kseroume ti domi tou pinaka
+	*max_g = 0; // allios max=hist[0]; an den kseroume ti domi tou pinaka
+	*max_b = 0; // allios max=hist[0]; an den kseroume ti domi tou pinaka
+	*max_pos_r = -1;
+	*max_pos_g = -1;
+	*max_pos_b = -1;
+
+	for (i = 0; i < 256; i++)
+	{
+		if ((hist_r[i] != 0) && (i >(*max_pos_r)))
+		{
+			*max_r = hist_r[i];	// MAX hue in the image
+			*max_pos_r = i;		// or max=hist[i]
+		}
+
+		if ((hist_g[i] != 0) && (i >(*max_pos_g)))
+		{
+			*max_g = hist_g[i];	// MAX hue in the image
+			*max_pos_g = i;		// or max=hist[i]
+		}
+
+		if ((hist_b[i] != 0) && (i >(*max_pos_b)))
+		{
+			*max_b = hist_b[i];	// MAX hue in the image
+			*max_pos_b = i;		// or max=hist[i]
+		}
+	}
+}
+
+float histogram_mean_color	// Mean value calculation
+(
+int hist_r[], int hist_g[], int hist_b[]
+)
+{
+	int i = 0;
+	float mean = 0.0;
+	float hist_sum_r = 0.0;
+	float hist_sum_g = 0.0;
+	float hist_sum_b = 0.0;
+
+	for (i = 0; i < 256; i++)
+	{
+		// hist[i] : number of pixel that has a specific hue
+		// i : hue
+		hist_sum_r = hist_sum_r + (i*hist_r[i]);
+		hist_sum_g = hist_sum_g + (i*hist_g[i]);
+		hist_sum_b = hist_sum_b + (i*hist_b[i]);
+	}
+	mean = (hist_sum_r + hist_sum_g + hist_sum_b) / (float)(lines*columns); // Mean value
+	return mean;
+}
+
+float histogram_variance_color	// Variance value calculation
+(
+int hist_r[], int hist_g[], int hist_b[], float mean
+)
+{
+	int i = 0;
+	float variance = 0.0;
+	float var_sum_r = 0.0;
+	float var_sum_g = 0.0;
+	float var_sum_b = 0.0;
+
+	for (i = 0; i < 256; i++)
+	{
+		// hist[i] : number of pixel that has a specific hue
+		// i : hue
+		var_sum_r = (var_sum_r + ((i - mean)*(i - mean)*hist_r[i])) / (float)(lines*columns);
+		var_sum_g = (var_sum_g + ((i - mean)*(i - mean)*hist_g[i])) / (float)(lines*columns);
+		var_sum_b = (var_sum_b + ((i - mean)*(i - mean)*hist_b[i])) / (float)(lines*columns);
+	}
+	variance = (float)sqrt(var_sum_r + var_sum_g + var_sum_b);
+	//variance=var_sum/((float)lines*columns); // Variance
+	return variance;
+}
+
+void histogram_possibility_color	// Possibility Calculation
+(
+int hist_r[], int hist_g[], int hist_b[],
+float possibility_r[], float possibility_g[], float possibility_b[]
+)
+{
+	int i = 0;
+
+	for (i = 0; i < 256; i++)
+	{
+		possibility_r[i] = hist_r[i] / (float)(lines*columns); // Possibilities of each hue to appear
+		possibility_g[i] = hist_g[i] / (float)(lines*columns); // Possibilities of each hue to appear
+		possibility_b[i] = hist_b[i] / (float)(lines*columns); // Possibilities of each hue to appear
+	}
+}
+
+void histogram_equalization_rgb_color	// Histogram Equalization [RGB]
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+float possibility_r[], float possibility_g[], float possibility_b[]
+)
+{
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	float hist_eq_r[256];
+	float hist_eq_g[256];
+	float hist_eq_b[256];
+
+	hist_eq_r[0] = possibility_r[0];
+	hist_eq_g[0] = possibility_g[0];
+	hist_eq_b[0] = possibility_b[0];
+	for (i = 1; i < 256; i++)
+	{
+		hist_eq_r[i] = hist_eq_r[i - 1] + possibility_r[i];
+		hist_eq_g[i] = hist_eq_g[i - 1] + possibility_g[i];
+		hist_eq_b[i] = hist_eq_b[i - 1] + possibility_b[i];
+	}
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			k = (*image_in_r)[i][j];
+			(*image_out_r)[i][j] = (unsigned char)round(hist_eq_r[k] * 255.0); // Histogram equalization
+			k = (*image_in_g)[i][j];
+			(*image_out_g)[i][j] = (unsigned char)round(hist_eq_g[k] * 255.0); // Histogram equalization
+			k = (*image_in_b)[i][j];
+			(*image_out_b)[i][j] = (unsigned char)round(hist_eq_b[k] * 255.0); // Histogram equalization
+		}
+	}
+}
+
+void histogram_equalization_hsv_color	// Histogram Equalization [HSV]
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+)
+{
+	int i = 0;
+	int j = 0;
+	int hist_v[256];
+	double s_hist_eq_v[256], sum_of_hist_v[256];
+	double max = 0.0;
+	double min = 0.0;
+	double chroma = 0.0;
+	double tmp = 0.0;
+	double c = 0.0;
+	double m = 0.0;
+	double x = 0.0;
+	long n;
+
+	double	**R, **G, **B;
+	double **H, **S, **V;
+
+	R = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i<lines; i++)
+		R[i] = (double*)malloc((columns)* sizeof(double));
+	G = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i<lines; i++)
+		G[i] = (double*)malloc((columns)* sizeof(double));
+	B = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i<lines; i++)
+		B[i] = (double*)malloc((columns)* sizeof(double));
+
+	H = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i<lines; i++)
+		H[i] = (double*)malloc((columns)* sizeof(double));
+	S = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i<lines; i++)
+		S[i] = (double*)malloc((columns)* sizeof(double));
+	V = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i<lines; i++)
+		V[i] = (double*)malloc((columns)* sizeof(double));
 }

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+#define _CRT_SECURE_NO_WARNINGS // Disabled deprication warnings for scanf, fopen
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -91,24 +92,24 @@ int main()
 
 			if (release_mem)
 			{
-				release_memory(&image_in, &image_out);
+				release_memory_bw(&image_in, &image_out);
 			}
 			
 			if (release_mem_sum_sub)
 			{
-				release_memory_sum_sub(&image_in, &image_in1, &image_in2, &image_out);
+				release_memory_sum_sub_bw(&image_in, &image_in1, &image_in2, &image_out);
 			}
 
 			exit(EXIT_SUCCESS);
 			break;
 		case 1: // Read from file
 			system("cls");
-			read_file(&image_in, &image_out, filename_in, fp_in);
+			read_file_bw(&image_in, &image_out, filename_in, fp_in);
 			release_mem = 1;
 			break;
 		case 2: // Write to file
 			system("cls");
-			write_file(&image_in, &image_out, filename_out, fp_out);
+			write_file_bw(&image_in, &image_out, filename_out, fp_out);
 			release_mem = 1;
 			break;
 		case 3: // Shift
@@ -118,7 +119,7 @@ int main()
 			scanf("%d", &n);
 
 			printf("\n\nImage editing...\n");
-			image_shift(&image_in, &image_out, n);
+			image_shift_bw(&image_in, &image_out, n);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -131,7 +132,7 @@ int main()
 			scanf("%d", &threshold);
 
 			printf("\n\nImage editing...\n");
-			image_threshold(&image_in, &image_out, threshold);
+			image_threshold_bw(&image_in, &image_out, threshold);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -141,7 +142,7 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			image_negative(&image_in, &image_out);
+			image_negative_bw(&image_in, &image_out);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -151,7 +152,7 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			image_sqrt(&image_in, &image_out);
+			image_sqrt_bw(&image_in, &image_out);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -167,7 +168,7 @@ int main()
 			scanf("%f", &b);
 
 			printf("\n\nImage editing...\n");
-			image_contrast_enhancement(&image_in, &image_out, a, b);
+			image_contrast_enhancement_bw(&image_in, &image_out, a, b);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -180,7 +181,7 @@ int main()
 			scanf("%f", &a);
 
 			printf("\n\nImage editing...\n");
-			image_brightness(&image_in, &image_out, a);
+			image_brightness_bw(&image_in, &image_out, a);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -193,7 +194,7 @@ int main()
 			scanf("%f", &b);
 
 			printf("\n\nImage editing...\n");
-			image_contrast(&image_in, &image_out, b);
+			image_contrast_bw(&image_in, &image_out, b);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -203,15 +204,15 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			histogram(&image_in, hist);
-			histogram_min(hist, &min, &min_pos);
-			histogram_max(hist, &max, &max_pos);
-			histogram_possibility(hist, possibility);
-			mean = histogram_mean(hist);
-			variance = histogram_variance(hist, mean);
+			histogram_bw(&image_in, hist);
+			histogram_min_bw(hist, &min, &min_pos);
+			histogram_max_bw(hist, &max, &max_pos);
+			histogram_possibility_bw(hist, possibility);
+			mean = histogram_mean_bw(hist);
+			variance = histogram_variance_bw(hist, mean);
 			printf("\nEditing complete.\n\n");
 
-			write_file_histogram(filename_out2, fp_out2, hist, possibility, mean, variance, &min, &max, &min_pos, &max_pos);
+			write_file_histogram_bw(filename_out2, fp_out2, hist, possibility, mean, variance, &min, &max, &min_pos, &max_pos);
 
 			release_mem = 1;
 			system("pause");
@@ -220,9 +221,9 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			histogram(&image_in, hist);
-			histogram_possibility(hist, possibility);
-			histogram_equalization_rgb(&image_in, &image_out, possibility);
+			histogram_bw(&image_in, hist);
+			histogram_possibility_bw(hist, possibility);
+			histogram_equalization_bw(&image_in, &image_out, possibility);
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -231,10 +232,10 @@ int main()
 		case 12: // Image summarization
 			system("cls");
 
-			read_file_sum_sub(&image_in1, &image_in2, filename_in, fp_in);
+			read_file_sum_sub_bw(&image_in1, &image_in2, filename_in, fp_in);
 
 			printf("\n\nImage editing...\n");
-			image_sum(&image_in1, &image_in2, &image_out);
+			image_sum_bw(&image_in1, &image_in2, &image_out);
 			printf("\nEditing complete.\n\n");
 
 			release_mem_sum_sub = 1;
@@ -243,10 +244,10 @@ int main()
 		case 13: // Image subtraction
 			system("cls");
 
-			read_file_sum_sub(&image_in1, &image_in2, filename_in, fp_in);
+			read_file_sum_sub_bw(&image_in1, &image_in2, filename_in, fp_in);
 
 			printf("\n\nImage editing...\n");
-			image_sub(&image_in1, &image_in2, &image_out);
+			image_sub_bw(&image_in1, &image_in2, &image_out);
 			printf("\nEditing complete.\n\n");
 
 			release_mem_sum_sub = 1;
@@ -294,7 +295,7 @@ int main()
 				printf("\n");
 			}
 
-			image_convolution_2d(&image_in, &image_out, wx, wy, size);
+			image_convolution_2d_bw(&image_in, &image_out, wx, wy, size);
 			printf("\nEditing complete.\n\n");
 
 			for (i = 0; i < size; i++)
