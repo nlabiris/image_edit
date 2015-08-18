@@ -26,6 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include "image_edit.h"
 
+#define	MAX(x, y)	(((x)>(y))?(x):(y))
+#define	MIN(x, y)	(((x)<(y))?(x):(y))
+
 
 
 
@@ -1431,8 +1434,16 @@ unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***ima
 {
 	int i = 0;
 	int j = 0;
+	int k = 0;
 	int hist_v[256];
-	double s_hist_eq_v[256], sum_of_hist_v[256];
+	double **R;
+	double **G;
+	double **B;
+	double **H;
+	double **S;
+	double **V;
+	double s_hist_eq_v[256];
+	double sum_of_hist_v[256];
 	double max = 0.0;
 	double min = 0.0;
 	double chroma = 0.0;
@@ -1440,28 +1451,541 @@ unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***ima
 	double c = 0.0;
 	double m = 0.0;
 	double x = 0.0;
-	long n;
-
-	double	**R, **G, **B;
-	double **H, **S, **V;
+	long n = 0;
 
 	R = (double**)malloc((lines)* sizeof(double*));
-	for (i = 0; i<lines; i++)
+	for (i = 0; i < lines; i++)
+	{
 		R[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
 	G = (double**)malloc((lines)* sizeof(double*));
-	for (i = 0; i<lines; i++)
+	for (i = 0; i < lines; i++)
+	{
 		G[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
 	B = (double**)malloc((lines)* sizeof(double*));
-	for (i = 0; i<lines; i++)
+	for (i = 0; i < lines; i++)
+	{
 		B[i] = (double*)malloc((columns)* sizeof(double));
+	}
 
 	H = (double**)malloc((lines)* sizeof(double*));
-	for (i = 0; i<lines; i++)
+	for (i = 0; i < lines; i++)
+	{
 		H[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
 	S = (double**)malloc((lines)* sizeof(double*));
-	for (i = 0; i<lines; i++)
+	for (i = 0; i < lines; i++)
+	{
 		S[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
 	V = (double**)malloc((lines)* sizeof(double*));
-	for (i = 0; i<lines; i++)
+	for (i = 0; i < lines; i++)
+	{
 		V[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
+	for (i = 0; i<lines; i++)
+	{
+		for (j = 0; j<columns; j++)
+		{
+			// unsigned char to double
+			R[i][j] = (double)(*image_in_r)[i][j]; // R
+			G[i][j] = (double)(*image_in_g)[i][j]; // G
+			B[i][j] = (double)(*image_in_b)[i][j]; // B
+			R[i][j] = R[i][j] / 255.0; // [0..1]
+			G[i][j] = G[i][j] / 255.0; // [0..1]
+			B[i][j] = B[i][j] / 255.0; // [0..1]
+
+			// RGB to HSV conversion
+			min = MIN(R[i][j], MIN(G[i][j], B[i][j]));
+			max = MAX(R[i][j], MAX(G[i][j], B[i][j]));
+			chroma = max - min;
+			H[i][j] = 0;
+			S[i][j] = 0;
+			if (chroma != 0.0)
+			{
+				if (fabs(R[i][j] - max)< 0.00001)
+				{
+					H[i][j] = ((G[i][j] - B[i][j]) / chroma);
+					H[i][j] = fmod(H[i][j], 6.0);	//H[i][j]=H[i][j]%6.0;
+				}
+				else if (fabs(G[i][j] - max)< 0.00001)
+				{
+					H[i][j] = ((B[i][j] - R[i][j]) / chroma) + 2;
+				}
+				else
+				{
+					H[i][j] = ((R[i][j] - G[i][j]) / chroma) + 4;	//fB[i][j]==max
+				}
+
+				H[i][j] = H[i][j] * 60.0;
+				if (H[i][j]<0.0)
+				{
+					H[i][j] = H[i][j] + 360;
+				}
+				S[i][j] = chroma / max;
+			}
+			V[i][j] = max;
+
+			// Checks
+			V[i][j] = V[i][j] * 255;
+
+			if (V[i][j]>255) V[i][j] = 255;
+			if (V[i][j]<0) V[i][j] = 0;
+		}
+	}
+
+	for (i = 0; i<256; i++)
+	{
+		hist_v[i] = 0;
+		s_hist_eq_v[i] = 0.0;
+	}
+
+	for (i = 0; i<lines; i++)
+	{
+		for (j = 0; j<columns; j++)
+		{
+			k = (int)V[i][j];
+			hist_v[k]++;
+		}
+	}
+
+	n = lines * columns;
+
+	for (i = 0; i<256; i++)  // pdf of image
+	{
+		s_hist_eq_v[i] = (double)hist_v[i] / (double)n;
+	}
+
+	sum_of_hist_v[0] = s_hist_eq_v[0];
+	for (i = 1; i<256; i++)        // cdf of image
+	{
+		sum_of_hist_v[i] = sum_of_hist_v[i - 1] + s_hist_eq_v[i];
+	}
+
+	for (i = 0; i<lines; i++)
+	{
+		for (j = 0; j<columns; j++)
+		{
+			k = (int)V[i][j];
+			V[i][j] = (unsigned char)round(sum_of_hist_v[k] * 255.0);
+			V[i][j] = V[i][j] / 255;
+
+			// HSV to RGB conversion
+			c = V[i][j] * S[i][j];
+			x = c * (1.0 - fabs(fmod(H[i][j] / 60.0, 2) - 1.0));
+			m = V[i][j] - c;
+
+			if (H[i][j] >= 0.0 && H[i][j] < 60.0)
+			{
+				R[i][j] = c;
+				G[i][j] = x;
+				B[i][j] = 0;
+			}
+			else if (H[i][j] >= 60.0 && H[i][j] < 120.0)
+			{
+				R[i][j] = x;
+				G[i][j] = c;
+				B[i][j] = 0;
+			}
+			else if (H[i][j] >= 120.0 && H[i][j] < 180.0)
+			{
+				R[i][j] = 0;
+				G[i][j] = c;
+				B[i][j] = x;
+			}
+			else if (H[i][j] >= 180.0 && H[i][j] < 240.0)
+			{
+				R[i][j] = 0;
+				G[i][j] = x;
+				B[i][j] = c;
+			}
+			else if (H[i][j] >= 240.0 && H[i][j] < 300.0)
+			{
+				R[i][j] = x;
+				G[i][j] = 0;
+				B[i][j] = c;
+			}
+			else if (H[i][j] >= 300.0 && H[i][j] < 360.0)
+			{
+				R[i][j] = c;
+				G[i][j] = 0;
+				B[i][j] = x;
+			}
+
+			R[i][j] = R[i][j] + m;
+			G[i][j] = G[i][j] + m;
+			B[i][j] = B[i][j] + m;
+
+			// Checks
+			R[i][j] = R[i][j] * 255;
+			G[i][j] = G[i][j] * 255;
+			B[i][j] = B[i][j] * 255;
+
+			if (R[i][j]>255) R[i][j] = 255;
+			if (R[i][j]<0) R[i][j] = 0;
+			if (G[i][j]>255) G[i][j] = 255;
+			if (G[i][j]<0) G[i][j] = 0;
+			if (B[i][j]>255) B[i][j] = 255;
+			if (B[i][j]<0) B[i][j] = 0;
+
+			// Save changes
+			(*image_out_r)[i][j] = (unsigned char)(R[i][j]);
+			(*image_out_g)[i][j] = (unsigned char)(G[i][j]);
+			(*image_out_b)[i][j] = (unsigned char)(B[i][j]);
+		}
+	}
+}
+
+void histogram_equalization_yuv_color	// Histogram Equalization [YUV]
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+)
+{
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	int hist_y[256];
+	double **R;
+	double **G;
+	double **B;
+	double **Y;
+	double **U;
+	double **V;
+	double s_hist_eq_y[256];
+	double sum_of_hist_y[256];
+	double max = 0.0;
+	double min = 0.0;
+	double chroma = 0.0;
+	double tmp = 0.0;
+	double c = 0.0;
+	double m = 0.0;
+	double x = 0.0;
+	long n = 0;
+
+	R = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i < lines; i++)
+	{
+		R[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
+	G = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i < lines; i++)
+	{
+		G[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
+	B = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i < lines; i++)
+	{
+		B[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
+	Y = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i < lines; i++)
+	{
+		Y[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
+	U = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i < lines; i++)
+	{
+		U[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
+	V = (double**)malloc((lines)* sizeof(double*));
+	for (i = 0; i < lines; i++)
+	{
+		V[i] = (double*)malloc((columns)* sizeof(double));
+	}
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			// unsigned char to double
+			R[i][j] = (double)(*image_in_r)[i][j]; // R
+			G[i][j] = (double)(*image_in_g)[i][j]; // G
+			B[i][j] = (double)(*image_in_b)[i][j]; // B
+			R[i][j] = R[i][j] / 255.0; // [0..1]
+			G[i][j] = G[i][j] / 255.0; // [0..1]
+			B[i][j] = B[i][j] / 255.0; // [0..1]
+
+			// RGB to YUV conversion
+			Y[i][j] = (0.299*R[i][j]) + (0.587*G[i][j]) + (0.114*B[i][j]); // Y
+			U[i][j] = (-0.14713*R[i][j]) - (0.28886*G[i][j]) + (0.436*B[i][j]); // U
+			V[i][j] = (0.615*R[i][j]) - (0.51499*G[i][j]) - (0.10001*B[i][j]); // V
+
+			// Checks
+			Y[i][j] = Y[i][j] * 255;
+			if (Y[i][j] > 255) Y[i][j] = 255;
+			if (Y[i][j] < 0) Y[i][j] = 0;
+		}
+	}
+
+	for (i = 0; i<256; i++)
+	{
+		hist_y[i] = 0;
+		s_hist_eq_y[i] = 0.0;
+	}
+
+	for (i = 0; i<lines; i++)
+	{
+		for (j = 0; j<columns; j++)
+		{
+			k = (int)Y[i][j];
+			hist_y[k]++;
+		}
+	}
+
+	n = lines * columns;
+
+	for (i = 0; i<256; i++)  // pdf of image
+	{
+		s_hist_eq_y[i] = (double)hist_y[i] / (double)n;
+	}
+
+	sum_of_hist_y[0] = s_hist_eq_y[0];
+	for (i = 1; i<256; i++)        // cdf of image
+	{
+		sum_of_hist_y[i] = sum_of_hist_y[i - 1] + s_hist_eq_y[i];
+	}
+
+	for (i = 0; i<lines; i++)
+	{
+		for (j = 0; j<columns; j++)
+		{
+			k = (int)Y[i][j];
+			Y[i][j] = (unsigned char)round(sum_of_hist_y[k] * 255.0);
+			Y[i][j] = Y[i][j] / 255;
+
+			// YUV to RGB conversion
+			R[i][j] = Y[i][j] + (0 * U[i][j]) + (1.13983*V[i][j]);
+			G[i][j] = Y[i][j] + (-0.39465*U[i][j]) + (-0.58060*V[i][j]);
+			B[i][j] = Y[i][j] + (2.03211*U[i][j]) + (0 * V[i][j]);
+
+			// Checks
+			R[i][j] = R[i][j] * 255;
+			G[i][j] = G[i][j] * 255;
+			B[i][j] = B[i][j] * 255;
+
+			if (R[i][j]>255) R[i][j] = 255;
+			if (R[i][j]<0) R[i][j] = 0;
+			if (G[i][j]>255) G[i][j] = 255;
+			if (G[i][j]<0) G[i][j] = 0;
+			if (B[i][j]>255) B[i][j] = 255;
+			if (B[i][j]<0) B[i][j] = 0;
+
+			// Save changes
+			(*image_out_r)[i][j] = (unsigned char)(R[i][j]);
+			(*image_out_g)[i][j] = (unsigned char)(G[i][j]);
+			(*image_out_b)[i][j] = (unsigned char)(B[i][j]);
+		}
+	}
+}
+
+void image_sum_color	// Image Summarization
+(
+unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
+unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+)
+{
+	int i = 0;
+	int j = 0;
+	int a = 0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			a = (*image_in1_r)[i][j] + (*image_in2_r)[i][j]; // Image summarization
+			if (a > 255)
+			{
+				a = 255;
+			}
+			(*image_out_r)[i][j] = (unsigned char)a;
+
+			a = (*image_in1_g)[i][j] + (*image_in2_g)[i][j]; // Image summarization
+			if (a > 255)
+			{
+				a = 255;
+			}
+			(*image_out_g)[i][j] = (unsigned char)a;
+
+			a = (*image_in1_b)[i][j] + (*image_in2_b)[i][j]; // Image summarization
+			if (a > 255)
+			{
+				a = 255;
+			}
+			(*image_out_b)[i][j] = (unsigned char)a;
+		}
+	}
+}
+
+void image_sub_color	// Image Subtract
+(
+unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
+unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+)
+{
+	int i = 0;
+	int j = 0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			(*image_out_r)[i][j] = (*image_in1_r)[i][j] - (*image_in2_r)[i][j]; // Image subtraction
+			(*image_out_g)[i][j] = (*image_in1_g)[i][j] - (*image_in2_g)[i][j]; // Image subtraction
+			(*image_out_b)[i][j] = (*image_in1_b)[i][j] - (*image_in2_b)[i][j]; // Image subtraction
+		}
+	}
+}
+
+void image_convolution_color	// Image Convolution with one mask
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+float **w, int size
+)
+{
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	int l = 0;
+	double tR = 0.0;
+	double tG = 0.0;
+	double tB = 0.0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			(*image_out_r)[i][j] = 0;
+			(*image_out_g)[i][j] = 0;
+			(*image_out_b)[i][j] = 0;
+		}
+	}
+
+	for (i = 1; i < lines - 1; i++)
+	{
+		for (j = 1; j < columns - 1; j++)
+		{
+			tR = 0.0;
+			tG = 0.0;
+			tB = 0.0;
+			for (k = 0; k < size; k++)
+			{
+				for (l = 0; l < size; l++)
+				{
+					tR = tR + (*image_in_r)[i + k - 1][j + l - 1] * w[k][l]; // Image Convolution with one mask
+					tG = tG + (*image_in_g)[i + k - 1][j + l - 1] * w[k][l]; // Image Convolution with one mask
+					tB = tB + (*image_in_b)[i + k - 1][j + l - 1] * w[k][l]; // Image Convolution with one mask
+				}
+			}
+
+			if (tR > 255 || tG > 255 || tB > 255)
+			{
+				tR = 255.0;
+				tG = 255.0;
+				tB = 255.0;
+			}
+			else if (tR < 0 || tG < 0.0 || tB < 0.0)
+			{
+				tR = 0.0;
+				tG = 0.0;
+				tB = 0.0;
+			}
+
+			(*image_out_r)[i][j] = (unsigned char)tR;
+			(*image_out_g)[i][j] = (unsigned char)tG;
+			(*image_out_b)[i][j] = (unsigned char)tB;
+		}
+	}
+}
+
+void image_convolution_2d_color	// Image Convolution with 2 mask, X-Axis and Y-Axis
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+float **wx, float **wy, int size
+)
+{
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	int l = 0;
+	double tR = 0.0;
+	double tG = 0.0;
+	double tB = 0.0;
+	double txR = 0.0;
+	double txG = 0.0;
+	double txB = 0.0;
+	double tyR = 0.0;
+	double tyG = 0.0;
+	double tyB = 0.0;
+
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			(*image_out_r)[i][j] = 0;
+			(*image_out_g)[i][j] = 0;
+			(*image_out_b)[i][j] = 0;
+		}
+	}
+
+	for (i = 1; i < lines - 1; i++)
+	{
+		for (j = 1; j < columns - 1; j++)
+		{
+			txR = 0.0;
+			txG = 0.0;
+			txB = 0.0;
+			tyR = 0.0;
+			tyG = 0.0;
+			tyB = 0.0;
+			for (k = 0; k < size; k++)
+			{
+				for (l = 0; l < size; l++)
+				{
+					txR = txR + (*image_in_r)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
+					txG = txG + (*image_in_g)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
+					txB = txB + (*image_in_b)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
+					tyR = tyR + (*image_in_r)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
+					tyG = tyG + (*image_in_g)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
+					tyB = tyB + (*image_in_b)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
+				}
+			}
+
+			tR = sqrt(txR*txG + tyR*tyR);
+			tG = sqrt(txR*txG + tyG*tyG);
+			tB = sqrt(txR*txB + tyB*tyB);
+
+			if (tR > 255.0 || tG > 255.0 || tB > 255.0)
+			{
+				tR = 255.0;
+				tG = 255.0;
+				tB = 255.0;
+			}
+			else if (tR < 0.0 || tG < 0.0 || tB < 0.0)
+			{
+				tR = 0.0;
+				tG = 0.0;
+				tB = 0.0;
+			}
+
+			(*image_out_r)[i][j] = (unsigned char)tR;
+			(*image_out_g)[i][j] = (unsigned char)tG;
+			(*image_out_b)[i][j] = (unsigned char)tB;
+		}
+	}
 }

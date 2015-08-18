@@ -109,7 +109,7 @@ int main()
 			break;
 		case 2: // Write to file
 			system("cls");
-			write_file_bw(&image_in, &image_out, filename_out, fp_out);
+			write_file_bw(&image_out, filename_out, fp_out);
 			release_mem = 1;
 			break;
 		case 3: // Shift
