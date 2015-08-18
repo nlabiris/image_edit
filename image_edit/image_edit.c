@@ -930,7 +930,6 @@ char filename_out[], FILE *fp_out
 
 	printf("Enter filename to write: ");
 	scanf("%s", filename_out);
-
 	
 	printf("\n\nWriting file...\n");
 	if (((fp_out = fopen(filename_out, "wb")) == NULL))
@@ -997,30 +996,17 @@ int threshold
 	{
 		for (j = 0; j < columns; j++)
 		{
-			if ((*image_in_r)[i][j] > threshold) // Check if image input (specific pixel) is higher or lower than the threshold we gave
+			// Check if image input (specific pixel) is higher or lower than the threshold we gave
+			if ((*image_in_r)[i][j] > threshold || (*image_in_g)[i][j] > threshold || (*image_in_b)[i][j] > threshold)
 			{
 				(*image_out_r)[i][j] = 255;
-			}
-			else
-			{
-				(*image_out_r)[i][j] = 0;
-			}
-
-			if ((*image_in_g)[i][j] > threshold) // Check if image input (specific pixel) is higher or lower than the threshold we gave
-			{
 				(*image_out_g)[i][j] = 255;
-			}
-			else
-			{
-				(*image_out_g)[i][j] = 0;
-			}
-
-			if ((*image_in_b)[i][j] > threshold) // Check if image input (specific pixel) is higher or lower than the threshold we gave
-			{
 				(*image_out_b)[i][j] = 255;
 			}
 			else
 			{
+				(*image_out_r)[i][j] = 0;
+				(*image_out_g)[i][j] = 0;
 				(*image_out_b)[i][j] = 0;
 			}
 		}

@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "image_edit.h"
 
@@ -36,12 +37,27 @@ int main()
 	unsigned char **image_in1 = NULL;	// Image input 1 for summarize - subtract
 	unsigned char **image_in2 = NULL;	// Image input 2 for summarize - subtract
 	unsigned char **image_out = NULL;	// Image output array
+	unsigned char **image_in_r = NULL;	// Image input array (Red)
+	unsigned char **image_in_g = NULL;	// Image input array (Green)
+	unsigned char **image_in_b = NULL;	// Image input array (Blue)
+	unsigned char **image_in1_r = NULL;	// Image input 1 for summarize - subtract (Red)
+	unsigned char **image_in1_g = NULL;	// Image input 1 for summarize - subtract (Green)
+	unsigned char **image_in1_b = NULL;	// Image input 1 for summarize - subtract (Blue)
+	unsigned char **image_in2_r = NULL;	// Image input 2 for summarize - subtract (Red)
+	unsigned char **image_in2_g = NULL;	// Image input 2 for summarize - subtract (Green)
+	unsigned char **image_in2_b = NULL;	// Image input 2 for summarize - subtract (Blue)
+	unsigned char **image_out_r = NULL;	// Image output array (Red)
+	unsigned char **image_out_g = NULL;	// Image output array (Green)
+	unsigned char **image_out_b = NULL;	// Image output array (Blue)
 	char release_mem = 0;				// Check if entered choice 1
 	char release_mem_sum_sub = 0;		// Check if entered choice 13, 14
 	char filename_in[20];				// Filename for input image
 	char filename_out[20];				// Filename for output image
 	char filename_out2[20];				// Filename for histogram
-	float possibility[256];				// Possibilities each hue
+	float possibility[256];				// Possibilities each hue (Red)
+	float possibility_r[256];			// Possibilities each hue (Red)
+	float possibility_g[256];			// Possibilities each hue (Green)
+	float possibility_b[256];			// Possibilities each hue (Blue)
 	float mean = 0.0;					// Mean value
 	float variance = 0.0;				// Variance 
 	float a = 0.0;						// Brightness
@@ -49,16 +65,33 @@ int main()
 	//float **w = NULL;					// Mask array
 	float **wx = NULL;					// Mask array X-Axis
 	float **wy = NULL;					// Mask array Y-Axis
+	int choice = 0;						// What edit want to do?
+	char answer[4];						// Yes/no if colored
+	int is_colored = 0;					// Is the image colored?
 	int hist[256];						// Histogram array
+	int hist_r[256];					// Histogram array (Red)
+	int hist_g[256];					// Histogram array (Green)
+	int hist_b[256];					// Histogram array (Blue)
 	int i = 0;							// Line counter
 	int j = 0;							// Column counter
 	int n = 0;							// Number of bits to shift
 	int threshold = 0;					// Image threshold
-	int choice = 0;						// What edit want to do
 	int min = 0;						// Minimum value of hue
+	int min_r = 0;						// Minimum value of hue (Red)
+	int min_g = 0;						// Minimum value of hue (Green)
+	int min_b = 0;						// Minimum value of hue (Blue)
 	int max = 0;						// Maximum value of hue
+	int max_r = 0;						// Maximum value of hue (Red)
+	int max_g = 0;						// Maximum value of hue (Green
+	int max_b = 0;						// Maximum value of hue (Blue)
 	int min_pos = 0;					// Minimum hue population
+	int min_pos_r = 0;					// Minimum hue population (Red)
+	int min_pos_g = 0;					// Minimum hue population (Green)
+	int min_pos_b = 0;					// Minimum hue population (Blue)
 	int max_pos = 0;					// Maximum hue population
+	int max_pos_r = 0;					// Maximum hue population (Red)
+	int max_pos_g = 0;					// Maximum hue population (Green)
+	int max_pos_b = 0;					// Maximum hue population (Blue)
 	int size = 0;						// Size of mask array, either one mask or X-Axis, Y-Axis mask
 
 
@@ -77,11 +110,13 @@ int main()
 		printf("9. Contrast\n");
 		printf("10. Histogram stats\n");
 		printf("11. Histogram equalization [RGB]\n");
-		printf("12. Image summarization\n");
-		printf("13. Image subtraction\n");
-		printf("14. Image convolution with 2 masks\n\n\n");
+		printf("12. Histogram equalization [HSV]\n");
+		printf("13. Histogram equalization [YUV]\n");
+		printf("14. Image summarization\n");
+		printf("15. Image subtraction\n");
+		printf("16. Image convolution with 2 masks\n\n\n");
 
-		printf("Enter a number (0-14): ");
+		printf("Enter a number (0-16): ");
 		scanf("%d", &choice);
 
 		switch (choice)
@@ -90,26 +125,62 @@ int main()
 			system("cls");
 			printf("Exiting the program...\n\n\n\n");
 
-			if (release_mem)
+			if (release_mem && !is_colored)
 			{
 				release_memory_bw(&image_in, &image_out);
 			}
+			else if (release_mem && is_colored)
+			{
+				release_memory_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b);
+			}
 			
-			if (release_mem_sum_sub)
+			if (release_mem_sum_sub && !is_colored)
 			{
 				release_memory_sum_sub_bw(&image_in, &image_in1, &image_in2, &image_out);
 			}
+			else if (release_mem_sum_sub && is_colored)
+			{
+				release_memory_sum_sub_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, &image_in1_r, &image_in1_g, &image_in1_b, &image_in2_r, &image_in2_g, &image_in2_b);
+			}
 
-			exit(EXIT_SUCCESS);
-			break;
+			return EXIT_SUCCESS;
 		case 1: // Read from file
 			system("cls");
-			read_file_bw(&image_in, &image_out, filename_in, fp_in);
-			release_mem = 1;
+
+			printf("Colored image? (y/n): ");
+			scanf("%s",answer);
+
+			if (strcmp("y", answer) == 0 || strcmp("yes", answer) == 0 || strcmp("YES", answer) == 0)
+			{
+				is_colored = 1;
+				read_file_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, filename_in, fp_in);
+				release_mem = 1;
+			}
+			else if (strcmp("n", answer) == 0 || strcmp("no", answer) == 0 || strcmp("NO", answer) == 0)
+			{
+				is_colored = 0;
+				read_file_bw(&image_in, &image_out, filename_in, fp_in);
+				release_mem = 1;
+			}
+			else
+			{
+				printf("Wrong answer!");
+				return EXIT_SUCCESS;
+			}
+
 			break;
 		case 2: // Write to file
 			system("cls");
-			write_file_bw(&image_out, filename_out, fp_out);
+
+			if (is_colored)
+			{
+				write_file_color(&image_out_r, &image_out_g, &image_out_b, filename_out, fp_out);
+			}
+			else
+			{
+				write_file_bw(&image_out, filename_out, fp_out);
+			}
+			
 			release_mem = 1;
 			break;
 		case 3: // Shift
@@ -119,7 +190,14 @@ int main()
 			scanf("%d", &n);
 
 			printf("\n\nImage editing...\n");
-			image_shift_bw(&image_in, &image_out, n);
+			if (is_colored)
+			{
+				image_shift_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, n);
+			}
+			else
+			{
+				image_shift_bw(&image_in, &image_out, n);
+			}
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -132,7 +210,14 @@ int main()
 			scanf("%d", &threshold);
 
 			printf("\n\nImage editing...\n");
-			image_threshold_bw(&image_in, &image_out, threshold);
+			if (is_colored)
+			{
+				image_threshold_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, threshold);
+			}
+			else
+			{
+				image_threshold_bw(&image_in, &image_out, threshold);
+			}
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -142,7 +227,14 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			image_negative_bw(&image_in, &image_out);
+			if (is_colored)
+			{
+				image_negative_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b);
+			}
+			else
+			{
+				image_negative_bw(&image_in, &image_out);
+			}
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -152,7 +244,14 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			image_sqrt_bw(&image_in, &image_out);
+			if (is_colored)
+			{
+				image_sqrt_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b);
+			}
+			else
+			{
+				image_sqrt_bw(&image_in, &image_out);
+			}
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -168,7 +267,14 @@ int main()
 			scanf("%f", &b);
 
 			printf("\n\nImage editing...\n");
-			image_contrast_enhancement_bw(&image_in, &image_out, a, b);
+			if (is_colored)
+			{
+				image_contrast_enhancement_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, a, b);
+			}
+			else
+			{
+				image_contrast_enhancement_bw(&image_in, &image_out, a, b);
+			}
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -181,7 +287,14 @@ int main()
 			scanf("%f", &a);
 
 			printf("\n\nImage editing...\n");
-			image_brightness_bw(&image_in, &image_out, a);
+			if (is_colored)
+			{
+				image_brightness_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, a);
+			}
+			else
+			{
+				image_brightness_bw(&image_in, &image_out, a);
+			}
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -194,7 +307,14 @@ int main()
 			scanf("%f", &b);
 
 			printf("\n\nImage editing...\n");
-			image_contrast_bw(&image_in, &image_out, b);
+			if (is_colored)
+			{
+				image_contrast_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, b);
+			}
+			else
+			{
+				image_contrast_bw(&image_in, &image_out, b);
+			}
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
@@ -204,15 +324,27 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			histogram_bw(&image_in, hist);
-			histogram_min_bw(hist, &min, &min_pos);
-			histogram_max_bw(hist, &max, &max_pos);
-			histogram_possibility_bw(hist, possibility);
-			mean = histogram_mean_bw(hist);
-			variance = histogram_variance_bw(hist, mean);
-			printf("\nEditing complete.\n\n");
+			if (is_colored)
+			{
+				histogram_color(&image_in_r, &image_in_g, &image_in_b, hist_r, hist_g, hist_b);
+				histogram_min_color(hist_r, hist_g, hist_b, &min_r, &min_g, &min_b, &min_pos_r, &min_pos_g, &min_pos_b);
+				histogram_max_color(hist_r, hist_g, hist_b, &max_r, &max_g, &max_b, &max_pos_r, &max_pos_g, &max_pos_b);
+				histogram_possibility_color(hist_r, hist_g, hist_b, possibility_r, possibility_g, possibility_b);
+				mean = histogram_mean_color(hist_r, hist_g, hist_b);
+				variance = histogram_variance_color(hist_r, hist_g, hist_b, mean);
+			}
+			else
+			{
+				histogram_bw(&image_in, hist);
+				histogram_min_bw(hist, &min, &min_pos);
+				histogram_max_bw(hist, &max, &max_pos);
+				histogram_possibility_bw(hist, possibility);
+				mean = histogram_mean_bw(hist);
+				variance = histogram_variance_bw(hist, mean);
 
-			write_file_histogram_bw(filename_out2, fp_out2, hist, possibility, mean, variance, &min, &max, &min_pos, &max_pos);
+				write_file_histogram_bw(filename_out2, fp_out2, hist, possibility, mean, variance, &min, &max, &min_pos, &max_pos);
+			}
+			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
 			system("pause");
@@ -221,39 +353,88 @@ int main()
 			system("cls");
 
 			printf("\n\nImage editing...\n");
-			histogram_bw(&image_in, hist);
-			histogram_possibility_bw(hist, possibility);
-			histogram_equalization_bw(&image_in, &image_out, possibility);
+			if (is_colored)
+			{
+				histogram_color(&image_in_r, &image_in_g, &image_in_b, hist_r, hist_g, hist_b);
+				histogram_possibility_color(hist_r, hist_g, hist_b, possibility_r, possibility_g, possibility_b);
+				histogram_equalization_rgb_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, possibility_r, possibility_g, possibility_b);
+			}
+			else
+			{
+				histogram_bw(&image_in, hist);
+				histogram_possibility_bw(hist, possibility);
+				histogram_equalization_bw(&image_in, &image_out, possibility);
+			}
 			printf("\nEditing complete.\n\n");
 
 			release_mem = 1;
 			system("pause");
 			break;
-		case 12: // Image summarization
+		case 12: // Histogram equalization [HSV]
 			system("cls");
 
-			read_file_sum_sub_bw(&image_in1, &image_in2, filename_in, fp_in);
+			printf("\n\nImage editing...\n");
+			if (is_colored)
+			{
+				histogram_equalization_hsv_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b);
+			}
+			printf("\nEditing complete.\n\n");
+
+			release_mem = 1;
+			system("pause");
+			break;
+		case 13: // Histogram equalization [YUV]
+			system("cls");
 
 			printf("\n\nImage editing...\n");
-			image_sum_bw(&image_in1, &image_in2, &image_out);
+			if (is_colored)
+			{
+				histogram_equalization_yuv_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b);
+			}
+			printf("\nEditing complete.\n\n");
+
+			release_mem = 1;
+			system("pause");
+			break;
+		case 14: // Image summarization
+			system("cls");
+
+			printf("\n\nImage editing...\n");
+			if (is_colored)
+			{
+				read_file_sum_sub_color(&image_in1_r, &image_in1_g, &image_in1_b, &image_in2_r, &image_in2_g, &image_in2_b, filename_in, fp_in);
+				image_sum_color(&image_in1_r, &image_in1_g, &image_in1_b, &image_in2_r, &image_in2_g, &image_in2_b, &image_out_r, &image_out_g, &image_out_b);
+			}
+			else
+			{
+				read_file_sum_sub_bw(&image_in1, &image_in2, filename_in, fp_in);
+				image_sum_bw(&image_in1, &image_in2, &image_out);
+			}
 			printf("\nEditing complete.\n\n");
 
 			release_mem_sum_sub = 1;
 			system("pause");
 			break;
-		case 13: // Image subtraction
+		case 15: // Image subtraction
 			system("cls");
 
-			read_file_sum_sub_bw(&image_in1, &image_in2, filename_in, fp_in);
-
 			printf("\n\nImage editing...\n");
-			image_sub_bw(&image_in1, &image_in2, &image_out);
+			if (is_colored)
+			{
+				read_file_sum_sub_color(&image_in1_r, &image_in1_g, &image_in1_b, &image_in2_r, &image_in2_g, &image_in2_b, filename_in, fp_in);
+				image_sub_color(&image_in1_r, &image_in1_g, &image_in1_b, &image_in2_r, &image_in2_g, &image_in2_b, &image_out_r, &image_out_g, &image_out_b);
+			}
+			else
+			{
+				read_file_sum_sub_bw(&image_in1, &image_in2, filename_in, fp_in);
+				image_sub_bw(&image_in1, &image_in2, &image_out);
+			}
 			printf("\nEditing complete.\n\n");
 
 			release_mem_sum_sub = 1;
 			system("pause");
 			break;
-		case 14: // Image convolution with 2 masks
+		case 16: // Image convolution with 2 masks
 			system("cls");
 
 			printf("Enter size of mask: ");
@@ -295,7 +476,14 @@ int main()
 				printf("\n");
 			}
 
-			image_convolution_2d_bw(&image_in, &image_out, wx, wy, size);
+			if (is_colored)
+			{
+				image_convolution_2d_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, wx, wy, size);
+			}
+			else
+			{
+				image_convolution_2d_bw(&image_in, &image_out, wx, wy, size);
+			}
 			printf("\nEditing complete.\n\n");
 
 			for (i = 0; i < size; i++)
