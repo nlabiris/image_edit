@@ -115,7 +115,7 @@ void read_file_bw(unsigned char ***image_in, unsigned char ***image_out, char fi
 	}
 
 	fp_in = fopen(filename_in, "rb");
-	printf("Reading file...\n");
+	printf("Reading file...\n\n");
 	for (i = 0; i < lines; i++)
 	{
 		fread((*image_in)[i], sizeof(unsigned char), columns, fp_in);
@@ -141,7 +141,7 @@ void read_file_sum_sub_bw(unsigned char ***image_in1, unsigned char ***image_in2
 	}
 
 	fp_in = fopen(filename_in, "rb");
-	printf("Reading file...\n");
+	printf("Reading file...\n\n");
 	for (i = 0; i < lines; i++)
 	{
 		fread((*image_in1)[i], sizeof(unsigned char), columns, fp_in);
@@ -636,6 +636,46 @@ void image_convolution_2d_bw(unsigned char ***image_in, unsigned char ***image_o
 	}
 }
 
+void image_rotation_clockwise_bw
+(
+unsigned char ***image_in, unsigned char ***image_out
+)
+{
+	int i = 0;
+	int j = 0;
+	int k = 0;
+
+	k = lines - 1;
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			(*image_out)[j][k] = (*image_in)[i][j]; 	// 90 degrees clockwise
+		}
+		k--;
+	}
+}
+
+void image_rotation_counterclockwise_bw
+(
+unsigned char ***image_in, unsigned char ***image_out
+)
+{
+	int i = 0;
+	int j = 0;
+	int k = 0;
+
+	k = lines - 1;
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			(*image_out)[i][j] = (*image_in)[j][k]; 	// 90 degrees counter-clockwise
+		}
+		k--;
+	}
+}
+
 
 
 
@@ -808,7 +848,7 @@ char filename_in[], FILE *fp_in
 		(*image_out_b)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
 	}
 
-	printf("Reading file...\n");
+	printf("Reading file...\n\n");
 	if (((fp_in = fopen(filename_in, "rb")) == NULL))
 	{
 		printf("Not a valid input file\n");
@@ -874,7 +914,7 @@ char filename_in[], FILE *fp_in
 		(*image_in2_b)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
 	}
 
-	printf("Reading file...\n");
+	printf("Reading file...\n\n");
 	if (((fp_in = fopen(filename_in, "rb")) == NULL))
 	{
 		printf("Not a valid input file\n");
@@ -1973,5 +2013,53 @@ float **wx, float **wy, int size
 			(*image_out_g)[i][j] = (unsigned char)tG;
 			(*image_out_b)[i][j] = (unsigned char)tB;
 		}
+	}
+}
+
+void image_rotation_clockwise_color
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+)
+{
+	int i = 0;
+	int j = 0;
+	int k = 0;
+
+	k = lines - 1;
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			// 90 degrees clockwise
+			(*image_out_r)[j][k] = (*image_in_r)[i][j];
+			(*image_out_g)[j][k] = (*image_in_g)[i][j];
+			(*image_out_b)[j][k] = (*image_in_b)[i][j];
+		}
+		k--;
+	}
+}
+
+void image_rotation_counterclockwise_color
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+)
+{
+	int i = 0;
+	int j = 0;
+	int k = 0;
+
+	k = lines - 1;
+	for (i = 0; i < lines; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			// 90 degrees counter-clockwise
+			(*image_out_r)[i][j] = (*image_in_r)[j][k];
+			(*image_out_g)[i][j] = (*image_in_g)[j][k];
+			(*image_out_b)[i][j] = (*image_in_b)[j][k];
+		}
+		k--;
 	}
 }

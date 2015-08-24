@@ -67,6 +67,7 @@ int main()
 	float **wy = NULL;					// Mask array Y-Axis
 	int choice = 0;						// What edit want to do?
 	char answer[4];						// Yes/no if colored
+	char degree[6];						// Left or right rotation
 	int is_colored = 0;					// Is the image colored?
 	int hist[256];						// Histogram array
 	int hist_r[256];					// Histogram array (Red)
@@ -108,15 +109,16 @@ int main()
 		printf("7. Contrast Enhancement\n");
 		printf("8. Brightness\n");
 		printf("9. Contrast\n");
-		printf("10. Histogram stats\n");
-		printf("11. Histogram equalization [RGB]\n");
-		printf("12. Histogram equalization [HSV]\n");
-		printf("13. Histogram equalization [YUV]\n");
-		printf("14. Image summarization\n");
-		printf("15. Image subtraction\n");
-		printf("16. Image convolution with 2 masks\n\n\n");
+		printf("10. Rotate\n");
+		printf("11. Histogram stats\n");
+		printf("12. Histogram equalization [RGB]\n");
+		printf("13. Histogram equalization [HSV]\n");
+		printf("14. Histogram equalization [YUV]\n");
+		printf("15. Image summarization\n");
+		printf("16. Image subtraction\n");
+		printf("17. Image convolution with 2 masks\n\n\n");
 
-		printf("Enter a number (0-16): ");
+		printf("Enter a number (0-17): ");
 		scanf("%d", &choice);
 
 		switch (choice)
@@ -147,16 +149,16 @@ int main()
 		case 1: // Read from file
 			system("cls");
 
-			printf("Colored image? (y/n): ");
+			printf("Colored image? (Y/N): ");
 			scanf("%s",answer);
 
-			if (strcmp("y", answer) == 0 || strcmp("yes", answer) == 0 || strcmp("YES", answer) == 0)
+			if (strcmp("y", answer) == 0 || strcmp("Y", answer) == 0 || strcmp("yes", answer) == 0 || strcmp("YES", answer) == 0)
 			{
 				is_colored = 1;
 				read_file_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, filename_in, fp_in);
 				release_mem = 1;
 			}
-			else if (strcmp("n", answer) == 0 || strcmp("no", answer) == 0 || strcmp("NO", answer) == 0)
+			else if (strcmp("n", answer) == 0 || strcmp("N", answer) == 0 || strcmp("no", answer) == 0 || strcmp("NO", answer) == 0)
 			{
 				is_colored = 0;
 				read_file_bw(&image_in, &image_out, filename_in, fp_in);
@@ -165,9 +167,12 @@ int main()
 			else
 			{
 				printf("Wrong answer!");
+				system("pause");
 				return EXIT_SUCCESS;
 			}
 
+			release_mem = 1;
+			system("pause");
 			break;
 		case 2: // Write to file
 			system("cls");
@@ -320,7 +325,51 @@ int main()
 			release_mem = 1;
 			system("pause");
 			break;
-		case 10: // Histogram values
+		case 10: // Rotate
+			system("cls");
+
+			printf("(L)eft or (R)ight rotation? (L/R): ");
+			scanf("%s", degree);
+
+			if (strcmp("l", degree) == 0 || strcmp("L", degree) == 0 || strcmp("left", degree) == 0 || strcmp("LEFT", degree) == 0)
+			{
+				printf("\n\nImage editing...\n");
+				if (is_colored)
+				{
+					image_rotation_counterclockwise_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b);
+				}
+				else
+				{
+					image_rotation_counterclockwise_bw(&image_in, &image_out);
+				}
+				printf("\nEditing complete.\n\n");
+				printf("Rotated left by 90 degrees\n\n");
+			}
+			else if (strcmp("r", degree) == 0 || strcmp("R", degree) == 0 || strcmp("right", degree) == 0 || strcmp("RIGHT", degree) == 0)
+			{
+				printf("\n\nImage editing...\n");
+				if (is_colored)
+				{
+					image_rotation_clockwise_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b);
+				}
+				else
+				{
+					image_rotation_clockwise_bw(&image_in, &image_out);
+				}
+				printf("\nEditing complete.\n\n");
+				printf("Rotated right by 90 degrees\n\n");
+			}
+			else
+			{
+				printf("Wrong answer!");
+				system("pause");
+				break;
+			}
+
+			release_mem = 1;
+			system("pause");
+			break;
+		case 11: // Histogram values
 			system("cls");
 
 			printf("\n\nImage editing...\n");
@@ -349,7 +398,7 @@ int main()
 			release_mem = 1;
 			system("pause");
 			break;
-		case 11: // Histogram equalization [RGB]
+		case 12: // Histogram equalization [RGB]
 			system("cls");
 
 			printf("\n\nImage editing...\n");
@@ -370,7 +419,7 @@ int main()
 			release_mem = 1;
 			system("pause");
 			break;
-		case 12: // Histogram equalization [HSV]
+		case 13: // Histogram equalization [HSV]
 			system("cls");
 
 			printf("\n\nImage editing...\n");
@@ -383,7 +432,7 @@ int main()
 			release_mem = 1;
 			system("pause");
 			break;
-		case 13: // Histogram equalization [YUV]
+		case 14: // Histogram equalization [YUV]
 			system("cls");
 
 			printf("\n\nImage editing...\n");
@@ -396,7 +445,7 @@ int main()
 			release_mem = 1;
 			system("pause");
 			break;
-		case 14: // Image summarization
+		case 15: // Image summarization
 			system("cls");
 
 			printf("\n\nImage editing...\n");
@@ -415,7 +464,7 @@ int main()
 			release_mem_sum_sub = 1;
 			system("pause");
 			break;
-		case 15: // Image subtraction
+		case 16: // Image subtraction
 			system("cls");
 
 			printf("\n\nImage editing...\n");
@@ -434,7 +483,7 @@ int main()
 			release_mem_sum_sub = 1;
 			system("pause");
 			break;
-		case 16: // Image convolution with 2 masks
+		case 17: // Image convolution with 2 masks
 			system("cls");
 
 			printf("Enter size of mask: ");

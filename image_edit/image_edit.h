@@ -152,6 +152,16 @@ void image_convolution_2d_bw	// Image Convolution with 2 mask, X-Axis and Y-Axis
 unsigned char ***image_in, unsigned char ***image_out, float **wx, float **wy, int size
 );
 
+void image_rotation_clockwise_bw
+(
+unsigned char ***image_in, unsigned char ***image_out
+);
+
+void image_rotation_counterclockwise_bw
+(
+unsigned char ***image_in, unsigned char ***image_out
+);
+
 
 
 
@@ -325,6 +335,18 @@ void image_convolution_2d_color	// Image Convolution with 2 mask, X-Axis and Y-A
 unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
 unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
 float **wx, float **wy, int size
+);
+
+void image_rotation_clockwise_color
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+);
+
+void image_rotation_counterclockwise_color
+(
+unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
 );
 
 #endif

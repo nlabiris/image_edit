@@ -17,6 +17,7 @@ Currently supports the following file formats:
 - Brightness
 - Contrast
 - Histogram
+- Rotate
 - Image summarization
 - Image subtraction
 - Image convolution (Sobel, Gaussian Blur, Sharpen)
@@ -32,10 +33,11 @@ Currently supports the following file formats:
 - [ ] Undo/Redo system
 - [ ] Check sum of kernel windows
 - [ ] Documentation of the source code
+- [ ] Check malloc() if read another file
 
 
 #### Download link
 
 You can download the executable below. For the source code, you can click the *"Download ZIP"* on the right or the *"Clone in Desktop"* to clone the repository.
 
-[ImageEdit v1.2](https://github.com/nlabiris/image_edit/blob/master/Release/image_edit_v1.2.rar?raw=true)
+[ImageEdit v1.3](https://github.com/nlabiris/image_edit/blob/master/Release/image_edit_v1.3.rar?raw=true)
