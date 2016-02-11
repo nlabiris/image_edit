@@ -22,331 +22,336 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef IMAGE_EDIT_
 #define IMAGE_EDIT_
 
-int lines;
-int columns;
+#define	MAX(x, y)	(((x)>(y))?(x):(y))
+#define	MIN(x, y)	(((x)<(y))?(x):(y))
 
+/**** Variables ****/
+
+int lines;                      // Lines
+int columns;                    // Columns
+unsigned char **image_in;       // Image input array
+unsigned char **image_out;      // Image output array
+unsigned char **image_in_r;     // Image input array (Red)
+unsigned char **image_in_g;     // Image input array (Green)
+unsigned char **image_in_b;     // Image input array (Blue)
+unsigned char **image_out_r;    // Image output array (Red)
+unsigned char **image_out_g;    // Image output array (Green)
+unsigned char **image_out_b;    // Image output array (Blue)
+char release_mem;               // If this flag is set release memory
+float possibility[256];         // Possibilities each hue (Red)
+float possibility_r[256];       // Possibilities each hue (Red)
+float possibility_g[256];       // Possibilities each hue (Green)
+float possibility_b[256];       // Possibilities each hue (Blue)
+int hist[256];                  // Histogram array
+int hist_r[256];                // Histogram array (Red)
+int hist_g[256];                // Histogram array (Green)
+int hist_b[256];                // Histogram array (Blue)
 
 
 
 /****************************** BW ******************************/
 
-void release_memory_bw	// Release memory (choice 1)
-(
-unsigned char ***image_in, unsigned char ***image_out
-);
 
-void release_memory_sum_sub_bw	// Release memory (choices 12, 13)
-(
-unsigned char ***image_in, unsigned char ***image_in1, unsigned char ***image_in2,
-unsigned char ***image_out
-);
+/**** Helper functions ****/
 
-void read_file_bw	// Open file for reading
-(
-unsigned char ***image_in, unsigned char ***image_out, char filename_in[], FILE *fp_in
-);
+/* Release memory */
+void free_memory_bw(
+    unsigned char ***image_in, unsigned char ***image_out
+    );
 
-void read_file_sum_sub_bw	// Open file for reading (Image summarization & Image subtraction)
-(
-unsigned char ***image_in1, unsigned char ***image_in2, char filename_in[], FILE *fp_in
-);
+/* Open file for reading */
+void read_file_bw(
+    unsigned char ***image_in, unsigned char ***image_out, char filename_in[], FILE *fp_in
+    );
 
-void write_file_bw	// Open file for writing
-(
-unsigned char ***image_out, char filename_out[], FILE *fp_out
-);
+/* Open file for writing */
+void write_file_bw(
+    unsigned char ***image_out, char filename_out[], FILE *fp_out
+    );
 
-void write_file_histogram_bw	// Open file for writing (Histogram only)
-(
-char filename_out2[], FILE *fp_out2, int hist[], float possibility[],
-float mean, float variance, int *min, int *max, int *min_pos, int *max_pos
-);
+/* Open file for writing (Histogram only) */
+void write_file_histogram_bw(
+    char filename_out2[], FILE *fp_out2, int hist[], float possibility[],
+    float mean, float variance, int *min, int *max, int *min_pos, int *max_pos
+    );
 
-void image_shift_bw	// Shift bit, hue reduction
-(
-unsigned char ***image_in, unsigned char ***image_out, int n
-);
 
-void image_threshold_bw	// Image threshold
-(
-unsigned char ***image_in, unsigned char ***image_out, int threshold
-);
+/**** Algorithms ****/
 
-void image_negative_bw	// Negative Image creation
-(
-unsigned char ***image_in, unsigned char ***image_out
-);
+/* Shift bit, hue reduction */
+void image_shift_bw(
+    unsigned char ***image_in, unsigned char ***image_out, int n
+    );
 
-void image_sqrt_bw	// Square root calculation
-(
-unsigned char ***image_in, unsigned char ***image_out
-);
+/* Image threshold */
+void image_threshold_bw(
+    unsigned char ***image_in, unsigned char ***image_out, int threshold
+    );
 
-void image_contrast_enhancement_bw	// Contrast enhancement, Brightness and Contrast together
-(
-unsigned char ***image_in, unsigned char ***image_out, float a, float b
-);
+/* Negative Image creation */
+void image_negative_bw(
+    unsigned char ***image_in, unsigned char ***image_out
+    );
 
-void image_brightness_bw	// Change Brightness
-(
-unsigned char ***image_in, unsigned char ***image_out, float a
-);
+/* Square root calculation */
+void image_sqrt_bw(
+    unsigned char ***image_in, unsigned char ***image_out
+    );
 
-void image_contrast_bw	// Change Contrast
-(
-unsigned char ***image_in, unsigned char ***image_out, float b
-);
+/* Contrast enhancement, Brightness and Contrast together */
+void image_contrast_enhancement_bw(
+    unsigned char ***image_in, unsigned char ***image_out, float a, float b
+    );
 
-void histogram_bw	// Histogram creation
-(
-unsigned char ***image_in, int hist[]
-);
+/* Change Brightness */
+void image_brightness_bw(
+    unsigned char ***image_in, unsigned char ***image_out, float a
+    );
 
-void histogram_min_bw	// Max values histogram
-(
-int hist[], int *min, int *min_pos
-);
+/* Change Contrast */
+void image_contrast_bw(
+    unsigned char ***image_in, unsigned char ***image_out, float b
+    );
 
-void histogram_max_bw	// Min values histogram
-(
-int hist[], int *max, int *max_pos
-);
+/* Histogram creation */
+void histogram_bw(
+    unsigned char ***image_in, int hist[]
+    );
 
-float histogram_mean_bw	// Mean value calculation
-(
-int hist[]
-);
+/* Max values histogram */
+void histogram_min_bw(
+    int hist[], int *min, int *min_pos
+    );
 
-float histogram_variance_bw	// Variance value calculation
-(
-int hist[], float mean
-);
+/* Min values histogram */
+void histogram_max_bw(
+    int hist[], int *max, int *max_pos
+    );
 
-void histogram_possibility_bw	// Possibility Calculation
-(
-int hist[], float possibility[]
-);
+/* Mean value calculation */
+float histogram_mean_bw(
+    int hist[]
+    );
 
-void histogram_equalization_bw	// Histogram Equalization
-(
-unsigned char ***image_in, unsigned char ***image_out, float possibility[]
-);
+/* Variance value calculation */
+float histogram_variance_bw(
+    int hist[], float mean
+    );
 
-void image_sum_bw	// Image Summarization
-(
-unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out
-);
+/* Possibility Calculation */
+void histogram_possibility_bw(
+    int hist[], float possibility[]
+    );
 
-void image_sub_bw	// Image Subtract
-(
-unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out
-);
+/* Histogram Equalization */
+void histogram_equalization_bw(
+    unsigned char ***image_in, unsigned char ***image_out, float possibility[]
+    );
 
-void image_convolution_bw	// Image Convolution with one mask
-(
-unsigned char ***image_in, unsigned char ***image_out, float **w, int size
-);
+/* Image Summarization */
+void image_sum_bw(
+    unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out
+    );
 
-void image_convolution_2d_bw	// Image Convolution with 2 mask, X-Axis and Y-Axis
-(
-unsigned char ***image_in, unsigned char ***image_out, float **wx, float **wy, int size
-);
+/* Image Subtract */
+void image_sub_bw(
+    unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out
+    );
 
-void image_rotation_clockwise_bw
-(
-unsigned char ***image_in, unsigned char ***image_out
-);
+/* Image Convolution with one mask */
+void image_convolution_bw(
+    unsigned char ***image_in, unsigned char ***image_out, float **w, int size
+    );
 
-void image_rotation_counterclockwise_bw
-(
-unsigned char ***image_in, unsigned char ***image_out
-);
+/* Image Convolution with 2 mask, X-Axis and Y-Axis */
+void image_convolution_2d_bw(
+    unsigned char ***image_in, unsigned char ***image_out, float **wx, float **wy, int size
+    );
+
+/* Image rotation (clockwise) */
+void image_rotation_clockwise_bw(
+    unsigned char ***image_in, unsigned char ***image_out
+    );
+
+/* Image rotation (counter-clockwise) */
+void image_rotation_counterclockwise_bw(
+    unsigned char ***image_in, unsigned char ***image_out
+    );
 
 
 
 
 /****************************** COLOR ******************************/
 
-void release_memory_color	// Release memory (choice 1)
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-);
 
-void release_memory_sum_sub_color	// Release memory (choices 12, 13)
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
-unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b
-);
+/**** Helper functions ****/
 
-void read_file_color	// Open file for reading
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-char filename_in[], FILE *fp_in
-);
+/* Release memory */
+void free_memory_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    );
 
-void read_file_sum_sub_color	// Open file for reading (Image summarization & Image subtraction)
-(
-unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
-unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b,
-char filename_in[], FILE *fp_in
-);
+/* Open file for reading */
+void read_file_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    char filename_in[], FILE *fp_in
+    );
 
-void write_file_color	// Open file for writing
-(
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-char filename_out[], FILE *fp_out
-);
+/* Open file for writing */
+void write_file_color(
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    char filename_out[], FILE *fp_out
+    );
 
-/*void write_file_histogram_color	// Open file for writing (Histogram only)
-(
+/* Open file for writing (Histogram only) */
+/*void write_file_histogram_color (
 char filename_out2[], FILE *fp_out2, int hist[], float possibility[],
 float mean, float variance, int *min, int *max, int *min_pos, int *max_pos
 );*/
 
-void image_shift_color	// Shift bit, hue reduction
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-int n
-);
 
-void image_threshold_color	// Image threshold
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-int threshold
-);
+/**** Algorithms ****/
 
-void image_negative_color	// Negative Image creation
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-);
+/* Shift bit, hue reduction */
+void image_shift_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    int n
+    );
 
-void image_sqrt_color	// Square root calculation
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-);
+/* Image threshold */
+void image_threshold_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    int threshold
+    );
 
-void image_contrast_enhancement_color	// Contrast enhancement, Brightness and Contrast together
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float a, float b
-);
+/* Negative Image creation */
+void image_negative_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    );
 
-void image_brightness_color	// Change Brightness
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float a
-);
+/* Square root calculation */
+void image_sqrt_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    );
 
-void image_contrast_color	// Change Contrast
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float b
-);
+/* Contrast enhancement, Brightness and Contrast together */
+void image_contrast_enhancement_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float a, float b
+    );
 
-void histogram_color	// Histogram creation
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-int hist_r[], int hist_g[], int hist_b[]
-);
+/* Change Brightness */
+void image_brightness_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float a
+    );
 
-void histogram_min_color	// Max values histogram
-(
-int hist_r[], int hist_g[], int hist_b[],
-int *min_r, int *min_g, int *min_b,
-int *min_pos_r, int *min_pos_g, int *min_pos_b
-);
+/* Change Contrast */
+void image_contrast_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float b
+    );
 
-void histogram_max_color	// Min values histogram
-(
-int hist_r[], int hist_g[], int hist_b[],
-int *max_r, int *max_g, int *max_b,
-int *max_pos_r, int *max_pos_g, int *max_pos_b
-);
+/* Histogram creation */
+void histogram_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    int hist_r[], int hist_g[], int hist_b[]
+    );
 
-float histogram_mean_color	// Mean value calculation
-(
-int hist_r[], int hist_g[], int hist_b[]
-);
+/* Max values histogram */
+void histogram_min_color(
+    int hist_r[], int hist_g[], int hist_b[],
+    int *min_r, int *min_g, int *min_b,
+    int *min_pos_r, int *min_pos_g, int *min_pos_b
+    );
 
-float histogram_variance_color	// Variance value calculation
-(
-int hist_r[], int hist_g[], int hist_b[], float mean
-);
+/* Min values histogram */
+void histogram_max_color(
+    int hist_r[], int hist_g[], int hist_b[],
+    int *max_r, int *max_g, int *max_b,
+    int *max_pos_r, int *max_pos_g, int *max_pos_b
+    );
 
-void histogram_possibility_color	// Possibility Calculation
-(
-int hist_r[], int hist_g[], int hist_b[],
-float possibility_r[], float possibility_g[], float possibility_b[]
-);
+/* Mean value calculation */
+float histogram_mean_color(
+    int hist_r[], int hist_g[], int hist_b[]
+    );
 
-void histogram_equalization_rgb_color	// Histogram Equalization [RGB]
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float possibility_r[], float possibility_g[], float possibility_b[]
-);
+/* Variance value calculation */
+float histogram_variance_color(
+    int hist_r[], int hist_g[], int hist_b[], float mean
+    );
 
-void histogram_equalization_hsv_color	// Histogram Equalization [HSV]
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-);
+/* Possibility Calculation */
+void histogram_possibility_color(
+    int hist_r[], int hist_g[], int hist_b[],
+    float possibility_r[], float possibility_g[], float possibility_b[]
+    );
 
-void histogram_equalization_yuv_color	// Histogram Equalization [YUV]
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-);
+/* Histogram Equalization [RGB] */
+void histogram_equalization_rgb_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float possibility_r[], float possibility_g[], float possibility_b[]
+    );
 
-void image_sum_color	// Image Summarization
-(
-unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
-unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-);
+/* Histogram Equalization [HSV] */
+void histogram_equalization_hsv_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    );
 
-void image_sub_color	// Image Subtract
-(
-unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
-unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-);
+/* Histogram Equalization [YUV] */
+void histogram_equalization_yuv_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    );
 
-void image_convolution_color	// Image Convolution with one mask
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float **w, int size
-);
+/* Image Convolution with one mask */
+void image_convolution_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float **w, int size
+    );
 
-void image_convolution_2d_color	// Image Convolution with 2 mask, X-Axis and Y-Axis
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float **wx, float **wy, int size
-);
+/* Image Convolution with 2 mask, X-Axis and Y-Axis */
+void image_convolution_2d_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float **wx, float **wy, int size
+    );
 
-void image_rotation_clockwise_color
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-);
+/* Image rotation (clockwise) */
+void image_rotation_clockwise_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    );
 
-void image_rotation_counterclockwise_color
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-);
+/* Image rotation (counter-clockwise) */
+void image_rotation_counterclockwise_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    );
+
+/* Color to grayscale */
+void color_to_grayscale(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    );
+
+/* Sepia tone */
+void sepia_tone(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    );
 
 #endif

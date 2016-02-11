@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /****************************** BW ******************************/
 
-void release_memory_bw(unsigned char ***image_in, unsigned char ***image_out) {
+void free_memory_bw(unsigned char ***image_in, unsigned char ***image_out) {
     int i = 0;
 
     for (i = 0; i < lines; i++) {
@@ -47,37 +47,6 @@ void release_memory_bw(unsigned char ***image_in, unsigned char ***image_out) {
     free(*image_out);
     *image_in = NULL;
     *image_out = NULL;
-}
-
-void release_memory_sum_sub_bw(unsigned char ***image_in, unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out) {
-    int i = 0;
-
-    if (*image_in == NULL || *image_out == NULL) {
-        printf("Memory already released! (image_in, image_out)");
-        for (i = 0; i < lines; i++) {
-            free((*image_in1)[i]);
-            free((*image_in2)[i]);
-        }
-        free(*image_in1);
-        free(*image_in2);
-        *image_in1 = NULL;
-        *image_in2 = NULL;
-    } else {
-        for (i = 0; i < lines; i++) {
-            free((*image_in)[i]);
-            free((*image_in1)[i]);
-            free((*image_in2)[i]);
-            free((*image_out)[i]);
-        }
-        free(*image_in);
-        free(*image_in1);
-        free(*image_in2);
-        free(*image_out);
-        *image_in = NULL;
-        *image_in1 = NULL;
-        *image_in2 = NULL;
-        *image_out = NULL;
-    }
 }
 
 void read_file_bw(unsigned char ***image_in, unsigned char ***image_out, char filename_in[], FILE *fp_in) {
@@ -107,34 +76,6 @@ void read_file_bw(unsigned char ***image_in, unsigned char ***image_out, char fi
     printf("Reading file...\n\n");
     for (i = 0; i < lines; i++) {
         fread((*image_in)[i], sizeof(unsigned char), columns, fp_in);
-    }
-    fclose(fp_in);
-}
-
-void read_file_sum_sub_bw(unsigned char ***image_in1, unsigned char ***image_in2, char filename_in[], FILE *fp_in) {
-    int i = 0;
-
-    printf("\n\nMemory allocation...\n");
-    *image_in1 = (unsigned char**)malloc((lines)*sizeof(unsigned char*));
-    for (i = 0; i < lines; i++) {
-        (*image_in1)[i] = (unsigned char*)malloc((columns)*sizeof(unsigned char));
-    }
-
-    *image_in2 = (unsigned char**)malloc((lines)*sizeof(unsigned char*));
-    for (i = 0; i < lines; i++) {
-        (*image_in2)[i] = (unsigned char*)malloc((columns)*sizeof(unsigned char));
-    }
-
-    fp_in = fopen(filename_in, "rb");
-    printf("Reading file...\n\n");
-    for (i = 0; i < lines; i++) {
-        fread((*image_in1)[i], sizeof(unsigned char), columns, fp_in);
-    }
-    fclose(fp_in);
-
-    fp_in = fopen(filename_in, "rb");
-    for (i = 0; i < lines; i++) {
-        fread((*image_in2)[i], sizeof(unsigned char), columns, fp_in);
     }
     fclose(fp_in);
 }
@@ -533,10 +474,7 @@ void image_convolution_2d_bw(unsigned char ***image_in, unsigned char ***image_o
     }
 }
 
-void image_rotation_clockwise_bw
-(
-unsigned char ***image_in, unsigned char ***image_out
-) {
+void image_rotation_clockwise_bw (unsigned char ***image_in, unsigned char ***image_out) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -550,10 +488,7 @@ unsigned char ***image_in, unsigned char ***image_out
     }
 }
 
-void image_rotation_counterclockwise_bw
-(
-unsigned char ***image_in, unsigned char ***image_out
-) {
+void image_rotation_counterclockwise_bw (unsigned char ***image_in, unsigned char ***image_out) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -572,11 +507,10 @@ unsigned char ***image_in, unsigned char ***image_out
 
 /****************************** COLOR ******************************/
 
-void release_memory_color	// Release memory (choice 1)
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-) {
+void free_memory_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    ) {
     int i = 0;
 
     for (i = 0; i < lines; i++) {
@@ -607,85 +541,11 @@ unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***ima
     *image_out_b = NULL;
 }
 
-void release_memory_sum_sub_color	// Release memory (choices 12, 13)
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
-unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b
-) {
-    int i = 0;
-
-    if (*image_in_r == NULL || *image_in_g == NULL || *image_in_b == NULL || *image_out_r == NULL || *image_out_g == NULL || *image_out_b == NULL) {
-        printf("Memory already released! (image_in, image_out)");
-        for (i = 0; i < lines; i++) {
-            free((*image_in1_r)[i]);
-            free((*image_in1_g)[i]);
-            free((*image_in1_b)[i]);
-            free((*image_in2_r)[i]);
-            free((*image_in2_g)[i]);
-            free((*image_in2_b)[i]);
-        }
-        free(*image_in1_r);
-        free(*image_in1_g);
-        free(*image_in1_b);
-        free(*image_in2_r);
-        free(*image_in2_g);
-        free(*image_in2_b);
-        *image_in_r = NULL;
-        *image_in1_g = NULL;
-        *image_in1_b = NULL;
-        *image_in2_r = NULL;
-        *image_in2_g = NULL;
-        *image_in2_b = NULL;
-    } else {
-        for (i = 0; i < lines; i++) {
-            free((*image_in_r)[i]);
-            free((*image_in_g)[i]);
-            free((*image_in_b)[i]);
-            free((*image_in1_r)[i]);
-            free((*image_in1_g)[i]);
-            free((*image_in1_b)[i]);
-            free((*image_in2_r)[i]);
-            free((*image_in2_g)[i]);
-            free((*image_in2_b)[i]);
-            free((*image_out_r)[i]);
-            free((*image_out_g)[i]);
-            free((*image_out_b)[i]);
-        }
-        free(*image_in_r);
-        free(*image_in_g);
-        free(*image_in_b);
-        free(*image_in1_r);
-        free(*image_in1_g);
-        free(*image_in1_b);
-        free(*image_in2_r);
-        free(*image_in2_g);
-        free(*image_in2_b);
-        free(*image_out_r);
-        free(*image_out_g);
-        free(*image_out_b);
-        *image_in_r = NULL;
-        *image_in_g = NULL;
-        *image_in_b = NULL;
-        *image_in1_r = NULL;
-        *image_in1_g = NULL;
-        *image_in1_b = NULL;
-        *image_in2_r = NULL;
-        *image_in2_g = NULL;
-        *image_in2_b = NULL;
-        *image_out_r = NULL;
-        *image_out_g = NULL;
-        *image_out_b = NULL;
-    }
-}
-
-void read_file_color	// Open file for reading
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-char filename_in[], FILE *fp_in
-) {
+void read_file_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    char filename_in[], FILE *fp_in
+    ) {
     int i = 0;
 
     printf("Enter filename to read: ");
@@ -742,80 +602,10 @@ char filename_in[], FILE *fp_in
     }
 }
 
-void read_file_sum_sub_color	// Open file for reading (Image summarization & Image subtraction)
-(
-unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
-unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b,
-char filename_in[], FILE *fp_in
-) {
-    int i = 0;
-
-    printf("\n\nMemory allocation...\n");
-    *image_in1_r = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
-    for (i = 0; i < lines; i++) {
-        (*image_in1_r)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
-    }
-    *image_in1_g = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
-    for (i = 0; i < lines; i++) {
-        (*image_in1_g)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
-    }
-    *image_in1_b = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
-    for (i = 0; i < lines; i++) {
-        (*image_in1_b)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
-    }
-
-    *image_in2_r = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
-    for (i = 0; i < lines; i++) {
-        (*image_in2_r)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
-    }
-    *image_in2_g = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
-    for (i = 0; i < lines; i++) {
-        (*image_in2_g)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
-    }
-    *image_in2_b = (unsigned char**)malloc((lines)* sizeof(unsigned char*));
-    for (i = 0; i < lines; i++) {
-        (*image_in2_b)[i] = (unsigned char*)malloc((columns)* sizeof(unsigned char));
-    }
-
-    printf("Reading file...\n\n");
-    if (((fp_in = fopen(filename_in, "rb")) == NULL)) {
-        printf("Not a valid input file\n");
-    } else {
-        for (i = 0; i < lines; i++) {
-            fread((*image_in1_r)[i], sizeof(unsigned char), columns, fp_in);
-        }
-        for (i = 0; i < lines; i++) {
-            fread((*image_in1_g)[i], sizeof(unsigned char), columns, fp_in);
-        }
-        for (i = 0; i < lines; i++) {
-            fread((*image_in1_b)[i], sizeof(unsigned char), columns, fp_in);
-        }
-
-        fclose(fp_in);
-    }
-
-    if (((fp_in = fopen(filename_in, "rb")) == NULL)) {
-        printf("Not a valid input file\n");
-    } else {
-        for (i = 0; i < lines; i++) {
-            fread((*image_in2_r)[i], sizeof(unsigned char), columns, fp_in);
-        }
-        for (i = 0; i < lines; i++) {
-            fread((*image_in2_g)[i], sizeof(unsigned char), columns, fp_in);
-        }
-        for (i = 0; i < lines; i++) {
-            fread((*image_in2_b)[i], sizeof(unsigned char), columns, fp_in);
-        }
-
-        fclose(fp_in);
-    }
-}
-
-void write_file_color	// Open file for writing
-(
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-char filename_out[], FILE *fp_out
-) {
+void write_file_color(
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    char filename_out[], FILE *fp_out
+    ) {
     int i = 0;
 
     printf("Enter filename to write: ");
@@ -839,12 +629,11 @@ char filename_out[], FILE *fp_out
     }
 }
 
-void image_shift_color	// Shift bit, hue reduction
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-int n
-) {
+void image_shift_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    int n
+    ) {
     int i = 0;
     int j = 0;
     double x = 0.0;
@@ -863,12 +652,11 @@ int n
     }
 }
 
-void image_threshold_color	// Image threshold
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-int threshold
-) {
+void image_threshold_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    int threshold
+    ) {
     int i = 0;
     int j = 0;
 
@@ -888,11 +676,10 @@ int threshold
     }
 }
 
-void image_negative_color	// Negative Image creation
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-) {
+void image_negative_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    ) {
     int i = 0;
     int j = 0;
 
@@ -905,11 +692,10 @@ unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***ima
     }
 }
 
-void image_sqrt_color	// Square root calculation
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-) {
+void image_sqrt_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    ) {
     int i = 0;
     int j = 0;
 
@@ -922,12 +708,11 @@ unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***ima
     }
 }
 
-void image_contrast_enhancement_color	// Contrast enhancement, Brightness and Contrast together
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float a, float b
-) {
+void image_contrast_enhancement_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float a, float b
+    ) {
     int i = 0;
     int j = 0;
     float x = 0.0;
@@ -961,12 +746,11 @@ float a, float b
     }
 }
 
-void image_brightness_color	// Change Brightness
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float a
-) {
+void image_brightness_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float a
+    ) {
     int i = 0;
     int j = 0;
     float x = 0.0;
@@ -1000,12 +784,11 @@ float a
     }
 }
 
-void image_contrast_color	// Change Contrast
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float b
-) {
+void image_contrast_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float b
+    ) {
     int i = 0;
     int j = 0;
     float x = 0.0;
@@ -1039,11 +822,10 @@ float b
     }
 }
 
-void histogram_color	// Histogram creation
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-int hist_r[], int hist_g[], int hist_b[]
-) {
+void histogram_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    int hist_r[], int hist_g[], int hist_b[]
+    ) {
     int i = 0;
     int j = 0;
     int l = 0;
@@ -1066,12 +848,11 @@ int hist_r[], int hist_g[], int hist_b[]
     }
 }
 
-void histogram_min_color	// Max values histogram
-(
-int hist_r[], int hist_g[], int hist_b[],
-int *min_r, int *min_g, int *min_b,
-int *min_pos_r, int *min_pos_g, int *min_pos_b
-) {
+void histogram_min_color(
+    int hist_r[], int hist_g[], int hist_b[],
+    int *min_r, int *min_g, int *min_b,
+    int *min_pos_r, int *min_pos_g, int *min_pos_b
+    ) {
     int i = 0;
     *min_r = 0;
     *min_g = 0;
@@ -1098,12 +879,11 @@ int *min_pos_r, int *min_pos_g, int *min_pos_b
     }
 }
 
-void histogram_max_color	// Min values histogram
-(
-int hist_r[], int hist_g[], int hist_b[],
-int *max_r, int *max_g, int *max_b,
-int *max_pos_r, int *max_pos_g, int *max_pos_b
-) {
+void histogram_max_color(
+    int hist_r[], int hist_g[], int hist_b[],
+    int *max_r, int *max_g, int *max_b,
+    int *max_pos_r, int *max_pos_g, int *max_pos_b
+    ) {
     int i = 0;
     *max_r = 0; // allios max=hist[0]; an den kseroume ti domi tou pinaka
     *max_g = 0; // allios max=hist[0]; an den kseroume ti domi tou pinaka
@@ -1130,10 +910,9 @@ int *max_pos_r, int *max_pos_g, int *max_pos_b
     }
 }
 
-float histogram_mean_color	// Mean value calculation
-(
-int hist_r[], int hist_g[], int hist_b[]
-) {
+float histogram_mean_color(
+    int hist_r[], int hist_g[], int hist_b[]
+    ) {
     int i = 0;
     float mean = 0.0;
     float hist_sum_r = 0.0;
@@ -1151,10 +930,9 @@ int hist_r[], int hist_g[], int hist_b[]
     return mean;
 }
 
-float histogram_variance_color	// Variance value calculation
-(
-int hist_r[], int hist_g[], int hist_b[], float mean
-) {
+float histogram_variance_color(
+    int hist_r[], int hist_g[], int hist_b[], float mean
+    ) {
     int i = 0;
     float variance = 0.0;
     float var_sum_r = 0.0;
@@ -1173,11 +951,10 @@ int hist_r[], int hist_g[], int hist_b[], float mean
     return variance;
 }
 
-void histogram_possibility_color	// Possibility Calculation
-(
-int hist_r[], int hist_g[], int hist_b[],
-float possibility_r[], float possibility_g[], float possibility_b[]
-) {
+void histogram_possibility_color(
+    int hist_r[], int hist_g[], int hist_b[],
+    float possibility_r[], float possibility_g[], float possibility_b[]
+    ) {
     int i = 0;
 
     for (i = 0; i < 256; i++) {
@@ -1187,12 +964,11 @@ float possibility_r[], float possibility_g[], float possibility_b[]
     }
 }
 
-void histogram_equalization_rgb_color	// Histogram Equalization [RGB]
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float possibility_r[], float possibility_g[], float possibility_b[]
-) {
+void histogram_equalization_rgb_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float possibility_r[], float possibility_g[], float possibility_b[]
+    ) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -1221,11 +997,10 @@ float possibility_r[], float possibility_g[], float possibility_b[]
     }
 }
 
-void histogram_equalization_hsv_color	// Histogram Equalization [HSV]
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-) {
+void histogram_equalization_hsv_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    ) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -1405,11 +1180,10 @@ unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***ima
     }
 }
 
-void histogram_equalization_yuv_color	// Histogram Equalization [YUV]
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-) {
+void histogram_equalization_yuv_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    ) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -1539,63 +1313,11 @@ unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***ima
     }
 }
 
-void image_sum_color	// Image Summarization
-(
-unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
-unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-) {
-    int i = 0;
-    int j = 0;
-    int a = 0;
-
-    for (i = 0; i < lines; i++) {
-        for (j = 0; j < columns; j++) {
-            a = (*image_in1_r)[i][j] + (*image_in2_r)[i][j]; // Image summarization
-            if (a > 255) {
-                a = 255;
-            }
-            (*image_out_r)[i][j] = (unsigned char)a;
-
-            a = (*image_in1_g)[i][j] + (*image_in2_g)[i][j]; // Image summarization
-            if (a > 255) {
-                a = 255;
-            }
-            (*image_out_g)[i][j] = (unsigned char)a;
-
-            a = (*image_in1_b)[i][j] + (*image_in2_b)[i][j]; // Image summarization
-            if (a > 255) {
-                a = 255;
-            }
-            (*image_out_b)[i][j] = (unsigned char)a;
-        }
-    }
-}
-
-void image_sub_color	// Image Subtract
-(
-unsigned char ***image_in1_r, unsigned char ***image_in1_g, unsigned char ***image_in1_b,
-unsigned char ***image_in2_r, unsigned char ***image_in2_g, unsigned char ***image_in2_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-) {
-    int i = 0;
-    int j = 0;
-
-    for (i = 0; i < lines; i++) {
-        for (j = 0; j < columns; j++) {
-            (*image_out_r)[i][j] = (*image_in1_r)[i][j] - (*image_in2_r)[i][j]; // Image subtraction
-            (*image_out_g)[i][j] = (*image_in1_g)[i][j] - (*image_in2_g)[i][j]; // Image subtraction
-            (*image_out_b)[i][j] = (*image_in1_b)[i][j] - (*image_in2_b)[i][j]; // Image subtraction
-        }
-    }
-}
-
-void image_convolution_color	// Image Convolution with one mask
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float **w, int size
-) {
+void image_convolution_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float **w, int size
+    ) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -1642,12 +1364,11 @@ float **w, int size
     }
 }
 
-void image_convolution_2d_color	// Image Convolution with 2 mask, X-Axis and Y-Axis
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-float **wx, float **wy, int size
-) {
+void image_convolution_2d_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
+    float **wx, float **wy, int size
+    ) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -1710,11 +1431,10 @@ float **wx, float **wy, int size
     }
 }
 
-void image_rotation_clockwise_color
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-) {
+void image_rotation_clockwise_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    ) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -1731,11 +1451,10 @@ unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***ima
     }
 }
 
-void image_rotation_counterclockwise_color
-(
-unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
-unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
-) {
+void image_rotation_counterclockwise_color(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    ) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -1749,5 +1468,45 @@ unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***ima
             (*image_out_b)[i][j] = (*image_in_b)[j][k];
         }
         k--;
+    }
+}
+
+void color_to_grayscale(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    ) {
+    int i = 0;
+    int j = 0;
+    double y = 0.0;
+
+    for (i = 0; i < lines; i++) {
+        for (j = 0; j < columns; j++) {
+            y = (*image_in_b)[i][j] * 0.114 + (*image_in_g)[i][j] * 0.587 + (*image_in_r)[i][j] * 0.299;
+            (*image_out_r)[i][j] = (unsigned char)y;
+            (*image_out_g)[i][j] = (unsigned char)y;
+            (*image_out_b)[i][j] = (unsigned char)y;
+        }
+    }
+}
+
+void sepia_tone(
+    unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
+    unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b
+    ) {
+    int i = 0;
+    int j = 0;
+    double r = 0.0;
+    double g = 0.0;
+    double b = 0.0;
+
+    for (i = 0; i < lines; i++) {
+        for (j = 0; j < columns; j++) {
+            r = (*image_in_b)[i][j] * 0.189 + (*image_in_g)[i][j] * 0.769 + (*image_in_r)[i][j] * 0.393;
+            g = (*image_in_b)[i][j] * 0.168 + (*image_in_g)[i][j] * 0.686 + (*image_in_r)[i][j] * 0.349;
+            b = (*image_in_b)[i][j] * 0.131 + (*image_in_g)[i][j] * 0.534 + (*image_in_r)[i][j] * 0.272;
+            (*image_out_r)[i][j] = r > 255 ? (unsigned char)255 : (unsigned char)r;
+            (*image_out_g)[i][j] = g > 255 ? (unsigned char)255 : (unsigned char)g;
+            (*image_out_b)[i][j] = b > 255 ? (unsigned char)255 : (unsigned char)b;
+        }
     }
 }
