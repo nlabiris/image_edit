@@ -24,6 +24,8 @@ Currently supports the following file formats:
 - Image equalization [RGB]
 - Image equalization [HSV]
 - Image equalization [YUV]
+- Color to grayscale
+- Sepia tone
 
 
 ### TODO
