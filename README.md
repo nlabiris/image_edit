@@ -29,9 +29,6 @@ Currently supports the following file formats:
 ### TODO
 
 - [ ] Color to Grayscale algorithm
-- [ ] Better encoder
-- [ ] Undo/Redo system
-- [ ] Check sum of kernel windows
 - [ ] Documentation of the source code
 - [ ] Check malloc() if read another file
 
