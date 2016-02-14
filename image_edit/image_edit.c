@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "image_edit.h"
+#include "algorithms.h"
 
 #define	MAX(x, y)	(((x)>(y))?(x):(y))
 #define	MIN(x, y)	(((x)<(y))?(x):(y))
@@ -1404,9 +1404,9 @@ void image_convolution_2d_color(
                     txR = txR + (*image_in_r)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
                     txG = txG + (*image_in_g)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
                     txB = txB + (*image_in_b)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
-                    tyR = tyR + (*image_in_r)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
-                    tyG = tyG + (*image_in_g)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
-                    tyB = tyB + (*image_in_b)[i + k - 1][j + l - 1] * wx[k][l]; // Image Convolution with one mask at X-Axis
+                    tyR = tyR + (*image_in_r)[i + k - 1][j + l - 1] * wy[k][l]; // Image Convolution with one mask at Y-Axis
+                    tyG = tyG + (*image_in_g)[i + k - 1][j + l - 1] * wy[k][l]; // Image Convolution with one mask at Y-Axis
+                    tyB = tyB + (*image_in_b)[i + k - 1][j + l - 1] * wy[k][l]; // Image Convolution with one mask at Y-Axis
                 }
             }
 

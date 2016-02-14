@@ -15,7 +15,8 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="image_edit.h" />
+    <ClInclude Include="algorithms.h" />
+    <ClInclude Include="kernels.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Debug\lena.raw" />

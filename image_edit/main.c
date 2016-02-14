@@ -26,10 +26,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "image_edit.h"
+#include "algorithms.h"
+#include "kernels.h"
 
 
 int main() {
+    int kernel;
     int choice;
     int is_colored;
 
@@ -124,7 +126,7 @@ int main() {
                    "10. Histogram equalization [RGB]\n"
                    "11. Histogram equalization [HSV]\n"
                    "12. Histogram equalization [YUV]\n"
-                   "13. Image convolution with 2 masks\n"
+                   "13. Image convolution\n"
                    "14. Color to grayscale\n"
                    "15. Sepia tone\n\n\n"
                    "Enter a number (0-15): ");
@@ -381,62 +383,333 @@ int main() {
                     release_mem = 1;
                     system("pause");
                     break;
-                case 13: // Image convolution with 2 masks
+                case 13: // Image convolution with 2 kernels
                     system("cls");
+                    int size;   // Kernel size
+                    float **w;  // Kernel
+                    float **wx; // Kernel X-Axis
+                    float **wy; // Kernel Y-Axis
+                    char answer1[4];
+                    
+                    printf("Custom kernel? (Y/N): ");
+                    scanf("%s", answer1);
 
-                    int size;   // Size of masks
-                    float **wx; // Mask array X-Axis
-                    float **wy; // Mask array Y-Axis
+                    if (strcmp("y", answer1) == 0 || strcmp("Y", answer1) == 0 || strcmp("yes", answer1) == 0 || strcmp("YES", answer1) == 0) {
+                        printf("Enter size of mask: ");
+                        scanf("%d", &size);
 
-                    printf("Enter size of mask: ");
-                    scanf("%d", &size);
-
-                    printf("\n\nMemory allocation...\n");
-                    wx = (float**)malloc((size)*sizeof(float*));
-                    for (int i = 0; i < size; i++) {
-                        wx[i] = (float*)malloc((size)*sizeof(float));
-                    }
-
-                    wy = (float**)malloc((size)*sizeof(float*));
-                    for (int i = 0; i < size; i++) {
-                        wy[i] = (float*)malloc((size)*sizeof(float));
-                    }
-
-                    printf("\n\nImage editing...\n");
-                    printf("\nEnter wx mask:\n\n");
-                    for (int i = 0; i < size; i++) {
-                        for (int j = 0; j < size; j++) {
-                            printf("wx[%d][%d] = ", i, j);
-                            scanf("%f", &wx[i][j]);
+                        wx = (float**)malloc((size)*sizeof(float*));
+                        wy = (float**)malloc((size)*sizeof(float*));
+                        for (int i = 0; i < size; i++) {
+                            wx[i] = (float*)malloc((size)*sizeof(float));
+                            wy[i] = (float*)malloc((size)*sizeof(float));
                         }
-                        printf("\n");
-                    }
 
-                    printf("\nEnter wy mask:\n\n");
-                    for (int i = 0; i < size; i++) {
-                        for (int j = 0; j < size; j++) {
-                            printf("wy[%d][%d] = ", i, j);
-                            scanf("%f", &wy[i][j]);
+                        printf("\nEnter wx mask:\n\n");
+                        for (int i = 0; i < size; i++) {
+                            for (int j = 0; j < size; j++) {
+                                printf("wx[%d][%d] = ", i, j);
+                                scanf("%f", &wx[i][j]);
+                            }
+                            printf("\n");
                         }
-                        printf("\n");
-                    }
 
-                    if (is_colored) {
-                        image_convolution_2d_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, wx, wy, size);
+                        printf("\nEnter wy mask:\n\n");
+                        for (int i = 0; i < size; i++) {
+                            for (int j = 0; j < size; j++) {
+                                printf("wy[%d][%d] = ", i, j);
+                                scanf("%f", &wy[i][j]);
+                            }
+                            printf("\n");
+                        }
+
+                        printf("\n\nImage editing...\n");
+                        if (is_colored) {
+                            image_convolution_2d_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, wx, wy, size);
+                        } else {
+                            image_convolution_2d_bw(&image_in, &image_out, wx, wy, size);
+                        }
+                        printf("\nEditing complete.\n\n");
+
+                        for (int i = 0; i < size; i++) {
+                            free(wx[i]);
+                            free(wy[i]);
+                        }
+                        free(wx);
+                        free(wy);
+                        wx = NULL;
+                        wy = NULL;
+                    } else if (strcmp("n", answer1) == 0 || strcmp("N", answer1) == 0 || strcmp("no", answer1) == 0 || strcmp("NO", answer1) == 0) {
+                        printf("0. Sobel (3x3)\n"
+                               "1. Sobel (5x5)\n"
+                               "2. Sobel (7x7)\n"
+                               "3. Gaussian (3x3)\n"
+                               "4. Gaussian (5x5)\n"
+                               "5. Gaussian (7x7)\n"
+                               "6. Mean (3x3)\n"
+                               "7. Mean (5x5)\n"
+                               "8. Mean (7x7)\n"
+                               "9. Lowpass (3x3)\n"
+                               "10. Lowpass (5x5)\n"
+                               "11. Sharpen (3x3)\n"
+                               "12. Sharpen (5x5)\n"
+                               "13. Shaarpen (7x7)\n\n\n"
+                               "Enter a number (0-13): ");
+
+                        scanf("%d", &kernel);
+
+                        switch (kernel) {
+                            case 0: // Sobel (3x3)
+                                size = 3;
+
+                                wx = (float**)malloc((size)*sizeof(float*));
+                                wy = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    wx[i] = (float*)malloc((size)*sizeof(float));
+                                    wy[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        wx[i][j] = sobel_3x3_X[i][j];
+                                        wy[i][j] = sobel_3x3_Y[i][j];
+                                    }
+                                }
+                                break;
+                            case 1: // Sobel (5x5)
+                                size = 5;
+
+                                wx = (float**)malloc((size)*sizeof(float*));
+                                wy = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    wx[i] = (float*)malloc((size)*sizeof(float));
+                                    wy[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        wx[i][j] = sobel_5x5_X[i][j];
+                                        wy[i][j] = sobel_5x5_Y[i][j];
+                                    }
+                                }
+                                break;
+                            case 2: // Sobel (7x7)
+                                size = 7;
+
+                                wx = (float**)malloc((size)*sizeof(float*));
+                                wy = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    wx[i] = (float*)malloc((size)*sizeof(float));
+                                    wy[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        wx[i][j] = sobel_7x7_X[i][j];
+                                        wy[i][j] = sobel_7x7_Y[i][j];
+                                    }
+                                }
+                                break;
+                            case 3: // Gaussian (3x3)
+                                size = 3;
+                                
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_3x3[i][j];
+                                    }
+                                }
+                                break;
+                            case 4: // Gaussian (5x5)
+                                size = 5;
+
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_5x5[i][j];
+                                    }
+                                }
+                                break;
+                            case 5: // Gaussian (7x7)
+                                size = 7;
+
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_7x7[i][j];
+                                    }
+                                }
+                                break;
+                            case 6: // Mean(3x3)
+                                size = 3;
+
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_7x7[i][j];
+                                    }
+                                }
+                                break;
+                            case 7: // Mean (5x5)
+                                size = 5;
+
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_7x7[i][j];
+                                    }
+                                }
+                                break;
+                            case 8: // Mean (7x7)
+                                size = 7;
+
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_7x7[i][j];
+                                    }
+                                }
+                                break;
+                            case 9: // Lowpass (3x3)
+                                size = 3;
+
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_7x7[i][j];
+                                    }
+                                }
+                                break;
+                            case 10: // Lowpass (5x5)
+                                size = 5;
+
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_7x7[i][j];
+                                    }
+                                }
+                                break;
+                            case 11: // Sharpen (3x3)
+                                size = 3;
+
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_7x7[i][j];
+                                    }
+                                }
+                                break;
+                            case 12: // Sharpen (5x5)
+                                size = 5;
+
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_7x7[i][j];
+                                    }
+                                }
+                                break;
+                            case 13: // Sharpen (7x7)
+                                size = 7;
+
+                                w = (float**)malloc((size)*sizeof(float*));
+                                for (int i = 0; i < size; i++) {
+                                    w[i] = (float*)malloc((size)*sizeof(float));
+                                }
+
+                                for (int i = 0; i < size; i++) {
+                                    for (int j = 0; j < size; j++) {
+                                        w[i][j] = gaussian_7x7[i][j];
+                                    }
+                                }
+                                break;
+                            default:
+                                system("cls");
+                                printf("WRONG CHOICE! Enter a different number! (0-13)\n\n\n");
+                                system("pause");
+                                return EXIT_FAILURE;
+                        }
+
+                        if (kernel == 0 || kernel == 1 || kernel == 2) {
+                            printf("\n\nImage editing...\n");
+                            if (is_colored) {
+                                image_convolution_2d_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, wx, wy, size);
+                            } else {
+                                image_convolution_2d_bw(&image_in, &image_out, wx, wy, size);
+                            }
+                            printf("\nEditing complete.\n\n");
+
+                            for (int i = 0; i < size; i++) {
+                                free(wx[i]);
+                                free(wy[i]);
+                            }
+                            free(wx);
+                            free(wy);
+                            wx = NULL;
+                            wy = NULL;
+                        } else {
+                            printf("\n\nImage editing...\n");
+                            if (is_colored) {
+                                image_convolution_color(&image_in_r, &image_in_g, &image_in_b, &image_out_r, &image_out_g, &image_out_b, w, size);
+                            } else {
+                                image_convolution_bw(&image_in, &image_out, w, size);
+                            }
+                            printf("\nEditing complete.\n\n");
+
+                            for (int i = 0; i < size; i++) {
+                                free(w[i]);
+                            }
+                            free(w);
+                            w = NULL;
+                        }
                     } else {
-                        image_convolution_2d_bw(&image_in, &image_out, wx, wy, size);
+                        printf("Wrong answer!");
+                        system("pause");
+                        return EXIT_FAILURE;
                     }
-                    printf("\nEditing complete.\n\n");
 
-                    for (int i = 0; i < size; i++) {
-                        free(wx[i]);
-                        free(wy[i]);
-                    }
-                    free(wx);
-                    free(wy);
-                    wx = NULL;
-                    wy = NULL;
-
+                    release_mem = 1;
                     system("pause");
                     break;
                 case 14: // Color to grayscale
@@ -471,6 +744,7 @@ int main() {
                     system("cls");
                     printf("WRONG CHOICE! Enter a different number! (0-13)\n\n\n");
                     system("pause");
+                    return EXIT_FAILURE;
             }
         }
     }
