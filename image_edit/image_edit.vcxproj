@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="image_edit.c" />
+    <ClCompile Include="algorithms.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
