@@ -18,9 +18,21 @@ Currently supports the following file formats:
 - Contrast
 - Histogram
 - Rotate
-- Image summarization
-- Image subtraction
-- Image convolution (Sobel, Gaussian Blur, Sharpen)
+- Image convolution
+    - Sobel (3x3)
+    - Sobel (5x5)
+    - Sobel (7x7)
+    - Gaussian (3x3)
+    - Gaussian (5x5)
+    - Gaussian (7x7)
+    - Mean (3x3)
+    - Mean (5x5)
+    - Mean (7x7)
+    - Lowpass (3x3)
+    - Lowpass (5x5)
+    - Sharpen (3x3)
+    - Sharpen (5x5)
+    - Sharpen (7x7)
 - Image equalization [RGB]
 - Image equalization [HSV]
 - Image equalization [YUV]
@@ -30,7 +42,6 @@ Currently supports the following file formats:
 
 ### TODO
 
-- [ ] Color to Grayscale algorithm
 - [ ] Documentation of the source code
 - [ ] Check malloc() if read another file
 
@@ -39,4 +50,9 @@ Currently supports the following file formats:
 
 You can download the executable below. For the source code, you can click the *"Download ZIP"* on the right or the *"Clone in Desktop"* to clone the repository.
 
-[ImageEdit v1.3](https://github.com/nlabiris/image_edit/blob/master/Release/image_edit_v1.3.rar?raw=true)
+[ImageEdit v2.0](https://github.com/nlabiris/image_edit/blob/master/Release/image_edit_v2.0.rar?raw=true)
+
+
+#### License
+
+The software is licensed under the `GNU GENERAL PUBLIC LICENSE Version 3`. For more information check the `LICENSE` file.
