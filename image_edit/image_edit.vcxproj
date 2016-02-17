@@ -18,12 +18,6 @@
     <ClInclude Include="algorithms.h" />
     <ClInclude Include="kernels.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Debug\lena.raw" />
-    <None Include="..\Debug\lena_color.raw" />
-    <None Include="..\Debug\Waterfall_429_640c.raw" />
-    <None Include="..\Debug\Waterfal_429x429.raw" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2BA830C5-9086-459F-8006-73B272432CA7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

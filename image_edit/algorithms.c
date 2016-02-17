@@ -371,34 +371,7 @@ void histogram_equalization_bw(unsigned char ***image_in, unsigned char ***image
     }
 }
 
-void image_sum_bw(unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out) {
-    int i = 0;
-    int j = 0;
-    int a = 0;
-
-    for (i = 0; i < lines; i++) {
-        for (j = 0; j < columns; j++) {
-            a = (*image_in1)[i][j] + (*image_in2)[i][j]; // Image summarization
-            if (a > 255) {
-                a = 255;
-            }
-            (*image_out)[i][j] = (unsigned char)a;
-        }
-    }
-}
-
-void image_sub_bw(unsigned char ***image_in1, unsigned char ***image_in2, unsigned char ***image_out) {
-    int i = 0;
-    int j = 0;
-
-    for (i = 0; i < lines; i++) {
-        for (j = 0; j < columns; j++) {
-            (*image_out)[i][j] = (*image_in1)[i][j] - (*image_in2)[i][j]; // Image subtraction
-        }
-    }
-}
-
-void image_convolution_bw(unsigned char ***image_in, unsigned char ***image_out, float **w, int size) {
+void image_convolution_bw(unsigned char ***image_in, unsigned char ***image_out, float **w, int size, double factor, double bias) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -407,12 +380,6 @@ void image_convolution_bw(unsigned char ***image_in, unsigned char ***image_out,
 
     // Calculate the offset regarding the size of the kernel.
     int offset = (size - 1) / 2;
-
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            printf("%.2f", w[i][j]);
-        }
-    }
 
     for (i = 0; i < lines; i++) {
         for (j = 0; j < columns; j++) {
@@ -430,6 +397,8 @@ void image_convolution_bw(unsigned char ***image_in, unsigned char ***image_out,
                 }
             }
 
+            t = factor*t + bias;
+
             if (t > 255) {
                 t = 255.0;
             } else if (t < 0) {
@@ -440,7 +409,7 @@ void image_convolution_bw(unsigned char ***image_in, unsigned char ***image_out,
     }
 }
 
-void image_convolution_2d_bw(unsigned char ***image_in, unsigned char ***image_out, float **wx, float **wy, int size) {
+void image_convolution_2d_bw(unsigned char ***image_in, unsigned char ***image_out, float **wx, float **wy, int size, double factor, double bias) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -473,6 +442,9 @@ void image_convolution_2d_bw(unsigned char ***image_in, unsigned char ***image_o
                     ty = ty + (*image_in)[i + k - offset][j + l - offset] * wy[k][l]; // Image Convolution with one mask at Y-Axis
                 }
             }
+
+            tx = factor*tx + bias;
+            ty = factor*ty + bias;
 
             t = sqrt(tx*tx + ty*ty);
 
@@ -1329,7 +1301,7 @@ void histogram_equalization_yuv_color(
 void image_convolution_color(
     unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
     unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-    float **w, int size
+    float **w, int size, double factor, double bias
     ) {
     int i = 0;
     int j = 0;
@@ -1363,6 +1335,10 @@ void image_convolution_color(
                 }
             }
 
+            tR = factor*tR + bias;
+            tG = factor*tR + bias;
+            tB = factor*tR + bias;
+
             if (tR > 255 || tG > 255 || tB > 255) {
                 tR = 255.0;
                 tG = 255.0;
@@ -1383,7 +1359,7 @@ void image_convolution_color(
 void image_convolution_2d_color(
     unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
     unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-    float **wx, float **wy, int size
+    float **wx, float **wy, int size, double factor, double bias
     ) {
     int i = 0;
     int j = 0;
@@ -1428,6 +1404,13 @@ void image_convolution_2d_color(
                     tyB = tyB + (*image_in_b)[i + k - offset][j + l - offset] * wy[k][l]; // Image Convolution with one mask at Y-Axis
                 }
             }
+
+            txR = factor*txR + bias;
+            txG = factor*txR + bias;
+            txB = factor*txR + bias;
+            tyR = factor*tyR + bias;
+            tyG = factor*tyR + bias;
+            tyB = factor*tyR + bias;
 
             tR = sqrt(txR*txG + tyR*tyR);
             tG = sqrt(txR*txG + tyG*tyG);
