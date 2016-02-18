@@ -390,9 +390,9 @@ int algorithms_menu(int is_colored) {
             case 13: // Image convolution
                 system("cls");
                 int size;   // Kernel size
-                float **w;  // Kernel
-                float **wx; // Kernel X-Axis
-                float **wy; // Kernel Y-Axis
+                double **w;  // Kernel
+                double **wx; // Kernel X-Axis
+                double **wy; // Kernel Y-Axis
                 double factor;
                 double bias;
                 char answer1[4];
@@ -404,11 +404,11 @@ int algorithms_menu(int is_colored) {
                     printf("Enter kernel's size: ");
                     scanf("%d", &size);
 
-                    wx = (float**)malloc((size)*sizeof(float*));
-                    wy = (float**)malloc((size)*sizeof(float*));
+                    wx = (double**)malloc((size)*sizeof(double*));
+                    wy = (double**)malloc((size)*sizeof(double*));
                     for (int i = 0; i < size; i++) {
-                        wx[i] = (float*)malloc((size)*sizeof(float));
-                        wy[i] = (float*)malloc((size)*sizeof(float));
+                        wx[i] = (double*)malloc((size)*sizeof(double));
+                        wy[i] = (double*)malloc((size)*sizeof(double));
                     }
                     printf("\nEnter X-axis kernel:\n\n");
                     for (int i = 0; i < size; i++) {
@@ -464,7 +464,7 @@ int algorithms_menu(int is_colored) {
                            "10. Lowpass (5x5)\n"
                            "11. Sharpen (3x3)\n"
                            "12. Sharpen (5x5)\n"
-                           "13. Shaarpen (7x7)\n\n\n"
+                           "13. Sharpen (7x7)\n\n\n"
                            "Enter a number (0-13): ");
 
                     scanf("%d", &kernel);
@@ -475,11 +475,11 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            wx = (float**)malloc((size)*sizeof(float*));
-                            wy = (float**)malloc((size)*sizeof(float*));
+                            wx = (double**)malloc((size)*sizeof(double*));
+                            wy = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                wx[i] = (float*)malloc((size)*sizeof(float));
-                                wy[i] = (float*)malloc((size)*sizeof(float));
+                                wx[i] = (double*)malloc((size)*sizeof(double));
+                                wy[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -494,11 +494,11 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            wx = (float**)malloc((size)*sizeof(float*));
-                            wy = (float**)malloc((size)*sizeof(float*));
+                            wx = (double**)malloc((size)*sizeof(double*));
+                            wy = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                wx[i] = (float*)malloc((size)*sizeof(float));
-                                wy[i] = (float*)malloc((size)*sizeof(float));
+                                wx[i] = (double*)malloc((size)*sizeof(double));
+                                wy[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -513,11 +513,11 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            wx = (float**)malloc((size)*sizeof(float*));
-                            wy = (float**)malloc((size)*sizeof(float*));
+                            wx = (double**)malloc((size)*sizeof(double*));
+                            wy = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                wx[i] = (float*)malloc((size)*sizeof(float));
-                                wy[i] = (float*)malloc((size)*sizeof(float));
+                                wx[i] = (double*)malloc((size)*sizeof(double));
+                                wy[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -532,9 +532,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0 / 16.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -548,9 +548,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0 / 159.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -564,9 +564,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0 / 140.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -580,9 +580,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -596,9 +596,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -612,9 +612,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -628,9 +628,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -644,9 +644,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -660,9 +660,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -676,9 +676,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {
@@ -692,9 +692,9 @@ int algorithms_menu(int is_colored) {
                             factor = 1.0;
                             bias = 0.0;
 
-                            w = (float**)malloc((size)*sizeof(float*));
+                            w = (double**)malloc((size)*sizeof(double*));
                             for (int i = 0; i < size; i++) {
-                                w[i] = (float*)malloc((size)*sizeof(float));
+                                w[i] = (double*)malloc((size)*sizeof(double));
                             }
 
                             for (int i = 0; i < size; i++) {

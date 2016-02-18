@@ -371,7 +371,7 @@ void histogram_equalization_bw(unsigned char ***image_in, unsigned char ***image
     }
 }
 
-void image_convolution_bw(unsigned char ***image_in, unsigned char ***image_out, float **w, int size, double factor, double bias) {
+void image_convolution_bw(unsigned char ***image_in, unsigned char ***image_out, double **w, int size, double factor, double bias) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -409,7 +409,7 @@ void image_convolution_bw(unsigned char ***image_in, unsigned char ***image_out,
     }
 }
 
-void image_convolution_2d_bw(unsigned char ***image_in, unsigned char ***image_out, float **wx, float **wy, int size, double factor, double bias) {
+void image_convolution_2d_bw(unsigned char ***image_in, unsigned char ***image_out, double **wx, double **wy, int size, double factor, double bias) {
     int i = 0;
     int j = 0;
     int k = 0;
@@ -1301,7 +1301,7 @@ void histogram_equalization_yuv_color(
 void image_convolution_color(
     unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
     unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-    float **w, int size, double factor, double bias
+    double **w, int size, double factor, double bias
     ) {
     int i = 0;
     int j = 0;
@@ -1359,7 +1359,7 @@ void image_convolution_color(
 void image_convolution_2d_color(
     unsigned char ***image_in_r, unsigned char ***image_in_g, unsigned char ***image_in_b,
     unsigned char ***image_out_r, unsigned char ***image_out_g, unsigned char ***image_out_b,
-    float **wx, float **wy, int size, double factor, double bias
+    double **wx, double **wy, int size, double factor, double bias
     ) {
     int i = 0;
     int j = 0;
